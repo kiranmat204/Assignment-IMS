@@ -28,7 +28,7 @@ public class DeleteProductForm {
         gbc.insets = new Insets(10,10,10,10);
         
         JLabel productIDLabel = new JLabel("Product ID:");
-        JTextField productIDField = new JTextField(15);
+        JTextField productIDField = new JTextField(10);
         JButton inputConfirmButton = new JButton("Confirm Delete");
         
         gbc.gridx = 0;
@@ -50,11 +50,25 @@ public class DeleteProductForm {
         inputConfirmButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                try{
+                    ProductDAO productDAO = new ProductDAO();
+                    
+                    String productId = productIDField.getText();
+                    boolean result = productDAO.removeProduct(productId);
+                    if(result){
+                        JOptionPane.showMessageDialog(frame, "Product deleted successfully!");
+                        frame.dispose();
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(frame, "Product ID not found!");
+                    }
+                }
+                catch(NumberFormatException ex){
+                    JOptionPane.showMessageDialog(frame, "Enter a valid product ID!");
+                }
             }
         
         });
-        
         frame.setVisible(true);
     }
 }
