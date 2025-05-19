@@ -83,6 +83,7 @@ public class MainMenu {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Implement Delete Product functionality here
+                new DeleteProductForm();
             }
         });
 

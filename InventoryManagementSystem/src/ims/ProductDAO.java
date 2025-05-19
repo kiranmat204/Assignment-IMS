@@ -147,7 +147,6 @@ public class ProductDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return productList;
     }
 }
