@@ -28,7 +28,7 @@ public class DeleteProductForm {
         gbc.insets = new Insets(10,10,10,10);
         
         JLabel productIDLabel = new JLabel("Product ID:");
-        JTextField productIDField = new JTextField(10);
+        JTextField productIDField = new JTextField(20);
         JButton inputConfirmButton = new JButton("Confirm Delete");
         
         gbc.gridx = 0;

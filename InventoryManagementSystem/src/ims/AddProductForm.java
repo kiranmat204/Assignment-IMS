@@ -22,45 +22,117 @@ public class AddProductForm {
     public AddProductForm() {
         frame = new JFrame("Add Product");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(400, 450);
         frame.setLocationRelativeTo(null);
-        frame.setLayout(new GridLayout(8, 2));
+        
+        
+        frame.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10,10,10,10);
+        
+        
 
         // Create labels and text fields
         JLabel productIdLabel = new JLabel("Product ID:");
-        JTextField productIdField = new JTextField();
+        JTextField productIdField = new JTextField(15);
+        productIdField.setPreferredSize(new Dimension(180, 30));
+        
+        
         JLabel productNameLabel = new JLabel("Product Name:");
-        JTextField productNameField = new JTextField();
+        JTextField productNameField = new JTextField(15);
+        productNameField.setPreferredSize(new Dimension(180, 30));
+        
         JLabel supplierLabel = new JLabel("Supplier:");
-        JTextField supplierField = new JTextField();
+        JTextField supplierField = new JTextField(15);
+        supplierField.setPreferredSize(new Dimension(180, 30));
+        
         JLabel categoryLabel = new JLabel("Category:");
-        JTextField categoryField = new JTextField();
+        JTextField categoryField = new JTextField(15);
+        categoryField.setPreferredSize(new Dimension(180, 30));
+        
         JLabel productBrandLabel = new JLabel("Product Brand:");
-        JTextField productBrandField = new JTextField();
+        JTextField productBrandField = new JTextField(15);
+        productBrandField.setPreferredSize(new Dimension(180, 30));
+        
         JLabel quantityLabel = new JLabel("Quantity:");
-        JTextField quantityField = new JTextField();
+        JTextField quantityField = new JTextField(15);
+        quantityField.setPreferredSize(new Dimension(180, 30));
+        
         JLabel priceLabel = new JLabel("Price:");
-        JTextField priceField = new JTextField();
+        JTextField priceField = new JTextField(15);
+        priceField.setPreferredSize(new Dimension(180, 30));
 
         JButton addButton = new JButton("Add Product");
 
         // Add components to the frame
-        frame.add(productIdLabel);
-        frame.add(productIdField);
-        frame.add(productNameLabel);
-        frame.add(productNameField);
-        frame.add(supplierLabel);
-        frame.add(supplierField);
-        frame.add(categoryLabel);
-        frame.add(categoryField);
-        frame.add(productBrandLabel);
-        frame.add(productBrandField);
-        frame.add(quantityLabel);
-        frame.add(quantityField);
-        frame.add(priceLabel);
-        frame.add(priceField);
-        frame.add(new JLabel());  // Empty label for alignment
-        frame.add(addButton);
+        gbc.gridx=0;
+        gbc.gridy=0;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(productIdLabel,gbc);
+        
+        gbc.gridx=1;
+        gbc.gridy=0;
+        frame.add(productIdField,gbc);
+        
+        gbc.gridx=0;
+        gbc.gridy=1;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(productNameLabel,gbc);
+        
+        gbc.gridx=1;
+        gbc.gridy=1;
+        frame.add(productNameField,gbc);
+        
+        gbc.gridx=0;
+        gbc.gridy=2;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(supplierLabel,gbc);
+        
+        gbc.gridx=1;
+        gbc.gridy=2;
+        frame.add(supplierField,gbc);
+        
+        gbc.gridx=0;
+        gbc.gridy=3;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(categoryLabel,gbc);
+        
+        gbc.gridx=1;
+        gbc.gridy=3;
+        frame.add(categoryField,gbc);
+        
+        gbc.gridx=0;
+        gbc.gridy=4;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(productBrandLabel,gbc);
+        
+        gbc.gridx=1;
+        gbc.gridy=4;
+        frame.add(productBrandField,gbc);
+        
+        gbc.gridx=0;
+        gbc.gridy=5;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(quantityLabel,gbc);
+        
+        gbc.gridx=1;
+        gbc.gridy=5;
+        frame.add(quantityField,gbc);
+        
+        gbc.gridx=0;
+        gbc.gridy=6;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(priceLabel,gbc);
+        
+        gbc.gridx=1;
+        gbc.gridy=6;
+        frame.add(priceField,gbc);
+        
+        //frame.add(new JLabel());  // Empty label for alignment
+        
+        gbc.gridx=1;
+        gbc.gridy=7;
+        frame.add(addButton,gbc);
 
         // Add button action
         addButton.addActionListener(new ActionListener() {

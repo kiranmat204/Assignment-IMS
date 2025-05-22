@@ -23,29 +23,61 @@ public class UpdateProductForm {
     public UpdateProductForm() {
         frame = new JFrame("Update Product");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(400, 260);
         frame.setLocationRelativeTo(null);
-        frame.setLayout(new GridLayout(8, 2));
+        
+        frame.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10,10,10,10);
 
         // Create labels and text fields
         JLabel productIdLabel = new JLabel("Product ID:");
-        JTextField productIdField = new JTextField();
+        JTextField productIdField = new JTextField(15);
+        productIdField.setPreferredSize(new Dimension(180, 30));
+        
         JLabel quantityLabel = new JLabel("New Quantity:");
-        JTextField quantityField = new JTextField();
+        JTextField quantityField = new JTextField(15);
+        quantityField.setPreferredSize(new Dimension(180, 30));
+        
         JLabel priceLabel = new JLabel("New Price:");
-        JTextField priceField = new JTextField();
+        JTextField priceField = new JTextField(15);
+        priceField.setPreferredSize(new Dimension(180, 30));
 
         JButton updateButton = new JButton("Update Product");
 
         // Add components to the frame
-        frame.add(productIdLabel);
-        frame.add(productIdField);
-        frame.add(quantityLabel);
-        frame.add(quantityField);
-        frame.add(priceLabel);
-        frame.add(priceField);
-        frame.add(new JLabel());  // Empty label for alignment
-        frame.add(updateButton);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(productIdLabel,gbc);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        frame.add(productIdField,gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(quantityLabel,gbc);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        frame.add(quantityField,gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        frame.add(priceLabel,gbc);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        frame.add(priceField,gbc);
+        
+        //frame.add(new JLabel());  // Empty label for alignment
+        
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        frame.add(updateButton,gbc);
 
         // Add button action to handle updating the product
         updateButton.addActionListener(new ActionListener() {
