@@ -9,7 +9,6 @@ package ims;
  * @author ankur
  */
 
-
 //import ims.core.ProductDAO;
 import javax.swing.*;
 import java.awt.*;

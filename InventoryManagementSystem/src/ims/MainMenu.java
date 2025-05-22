@@ -20,6 +20,7 @@ public class MainMenu {
     private JFrame frame;
 
     ProductDAO productDAO = new ProductDAO();
+    DatabaseTableSetup dts = new DatabaseTableSetup();
 
     public MainMenu() {
         
@@ -47,6 +48,7 @@ public class MainMenu {
         JButton deleteProductButton = new JButton("Delete Product");
 
         productDAO.createProductTable();
+        dts.initialiseTables();
 
         // Set layout
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));

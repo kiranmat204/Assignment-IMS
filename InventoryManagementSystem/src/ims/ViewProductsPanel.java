@@ -23,7 +23,7 @@ public class ViewProductsPanel {
     public ViewProductsPanel() {
         frame = new JFrame("View Products");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(800, 400);
         frame.setLocationRelativeTo(null);
 
         String[] columnNames = {"Product ID", "Name", "Brand", "Category", "Quantity", "Price", "Supplier"};
