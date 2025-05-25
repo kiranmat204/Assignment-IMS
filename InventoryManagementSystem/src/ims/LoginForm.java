@@ -38,7 +38,7 @@ public class LoginForm extends JDialog {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
-        Font labelFont = new Font("SansSerif", Font.BOLD, 14);
+        Font labelFont = new Font("Arial", Font.BOLD, 14);
 
         usernameField = new JTextField(15);
         passwordField = new JPasswordField(15);
