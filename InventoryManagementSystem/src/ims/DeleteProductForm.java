@@ -7,11 +7,11 @@ package ims;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 /**
  *
- * @author kiranmat
+ * @author ankur
  */
 public class DeleteProductForm extends JPanel {
 
@@ -20,10 +20,30 @@ public class DeleteProductForm extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding around panel
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
+        
+        Font boldFont = new Font("Arial", Font.BOLD, 20);
 
         JLabel productIDLabel = new JLabel("Product ID:");
+        productIDLabel.setFont(boldFont);
         JTextField productIDField = new JTextField(15);
+        
+        
+        
+        
+        
         JButton inputConfirmButton = new JButton("Confirm Delete");
+        inputConfirmButton.setFont(boldFont);
+
+        // Set background to light blue and text to white
+        inputConfirmButton.setBackground(new Color(0, 51, 102)); // dark blue
+        inputConfirmButton.setForeground(Color.WHITE);             // White text
+
+        // Optional: Improve visual appearance
+        inputConfirmButton.setFocusPainted(false);
+        inputConfirmButton.setBorderPainted(false);
+        inputConfirmButton.setOpaque(true);
+
+        
 
         // Add Product ID label
         gbc.gridx = 0;

@@ -36,7 +36,7 @@ public class MainMenu {
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setLocationRelativeTo(null);
 
-        Font buttonFont = new Font("SansSerif", Font.BOLD, 30);
+        Font buttonFont = new Font("Arial", Font.BOLD, 20);
 
         // Create background panel with BorderLayout
         BackgroundPanel backgroundPanel = new BackgroundPanel("src/images/1.jpg");
@@ -48,27 +48,41 @@ public class MainMenu {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 0, 0)); // padding
 
+        JButton dashboardButton = new JButton("Dashboard");
         JButton addProductButton = new JButton("Add Product");
-        JButton viewProductsButton = new JButton("View Products");
         JButton updateProductButton = new JButton("Update Product");
         JButton deleteProductButton = new JButton("Delete Product");
+        JButton viewProductsButton = new JButton("Products Report");
 
+        // Set font
+        dashboardButton.setFont(buttonFont);
         addProductButton.setFont(buttonFont);
-        viewProductsButton.setFont(buttonFont);
         updateProductButton.setFont(buttonFont);
         deleteProductButton.setFont(buttonFont);
+        viewProductsButton.setFont(buttonFont);
 
-        buttonPanel.add(addProductButton);
+        // Optional: Make button sizes consistent
+        Dimension buttonSize = new Dimension(200, 40);
+        dashboardButton.setMaximumSize(buttonSize);
+        addProductButton.setMaximumSize(buttonSize);
+        updateProductButton.setMaximumSize(buttonSize);
+        deleteProductButton.setMaximumSize(buttonSize);
+        viewProductsButton.setMaximumSize(buttonSize);
+
+        // Add buttons with consistent spacing (add strut AFTER each, except last)
+        buttonPanel.add(dashboardButton);
         buttonPanel.add(Box.createVerticalStrut(20));
-        buttonPanel.add(viewProductsButton);
+        buttonPanel.add(addProductButton);
         buttonPanel.add(Box.createVerticalStrut(20));
         buttonPanel.add(updateProductButton);
         buttonPanel.add(Box.createVerticalStrut(20));
         buttonPanel.add(deleteProductButton);
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(viewProductsButton);
 
         // TOP RIGHT: Logout button
         JButton logoutButton = new JButton("Logout");
-        logoutButton.setFont(new Font("SansSerif", Font.BOLD, 18));
+        logoutButton.setFont(new Font("Arial", Font.BOLD, 18));
         logoutButton.addActionListener(e -> {
             frame.dispose();
             main(null); // Restart login
@@ -82,8 +96,7 @@ public class MainMenu {
         backgroundPanel.add(topPanel, BorderLayout.NORTH);
         backgroundPanel.add(buttonPanel, BorderLayout.WEST);
 
-        productDAO.createProductTable();
-
+        //productDAO.createProductTable();
         frame.setContentPane(backgroundPanel);
         frame.setVisible(true);
 
@@ -114,6 +127,13 @@ public class MainMenu {
         deleteProductButton.addActionListener(e -> {
             contentPanel.removeAll();
             contentPanel.add(new DeleteProductForm(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+
+        dashboardButton.addActionListener(e -> {
+            contentPanel.removeAll();
+            contentPanel.add(new DashboardPanel(productDAO), BorderLayout.CENTER);
             contentPanel.revalidate();
             contentPanel.repaint();
         });

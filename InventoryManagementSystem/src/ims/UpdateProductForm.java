@@ -8,8 +8,6 @@ package ims;
  *
  * @author ankur
  */
-
-
 //import ims.core.ProductDAO;
 import javax.swing.*;
 import java.awt.*;
@@ -21,16 +19,39 @@ public class UpdateProductForm extends JPanel {
     public UpdateProductForm() {
         setLayout(new GridLayout(4, 2, 10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding around panel
+        Font boldFont = new Font("Arial", Font.BOLD, 20);
+        
 
         // Create labels and text fields
         JLabel productIdLabel = new JLabel("Product ID:");
+        productIdLabel.setFont(boldFont);
         JTextField productIdField = new JTextField();
+        productIdField.setPreferredSize(new Dimension(100, 10));
+        
         JLabel quantityLabel = new JLabel("New Quantity:");
+        quantityLabel.setFont(boldFont);
         JTextField quantityField = new JTextField();
+        quantityField.setPreferredSize(new Dimension(100, 10));
+        
         JLabel priceLabel = new JLabel("New Price:");
+        priceLabel.setFont(boldFont);
         JTextField priceField = new JTextField();
+        priceField.setPreferredSize(new Dimension(100, 10));
+        
 
+        
+        
         JButton updateButton = new JButton("Update Product");
+        updateButton.setFont(boldFont);
+
+        // Set background to light blue and text to white
+        updateButton.setBackground(new Color(0, 51, 102)); // dark blue
+        updateButton.setForeground(Color.WHITE);             // White text
+
+        // Optional: Improve visual appearance
+        updateButton.setFocusPainted(false);
+        updateButton.setBorderPainted(false);
+        updateButton.setOpaque(true);
 
         // Add components to the panel
         add(productIdLabel);
@@ -50,8 +71,8 @@ public class UpdateProductForm extends JPanel {
                 double newPrice = Double.parseDouble(priceField.getText().trim());
 
                 ProductDAO productDAO = new ProductDAO();
-                boolean result = productDAO.updateProductQuantity(productId, newQuantity)
-                                && productDAO.updateProductPrice(productId, newPrice);
+                boolean result = productDAO.updateProductQuantity(productId, newQuantity) &&
+                        productDAO.updateProductPrice(productId, newPrice);
 
                 if (result) {
                     JOptionPane.showMessageDialog(this, "Product updated successfully!");
