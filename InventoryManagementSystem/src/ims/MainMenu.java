@@ -21,7 +21,7 @@ public class MainMenu {
 
     ProductDAO productDAO = new ProductDAO();
 
-    public MainMenu() {
+    public void showMainMenu() {
         
         System.out.println("Testing Derby connection...");
 
@@ -37,7 +37,7 @@ public class MainMenu {
         }
         frame = new JFrame("Inventory Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 300);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // making window size big
         frame.setLocationRelativeTo(null);
 
         // Create buttons
@@ -91,6 +91,15 @@ public class MainMenu {
     }
 
     public static void main(String[] args) {
-        new MainMenu();  // Launch the main menu
+        // Show login first
+        LoginForm loginForm = new LoginForm();
+        boolean isAuthenticated = loginForm.showLoginDialog();
+
+        if (isAuthenticated) {
+            new MainMenu().showMainMenu();
+        } else {
+            JOptionPane.showMessageDialog(null, "Exiting application. Login required.");
+            System.exit(0);
+        }
     }
 }

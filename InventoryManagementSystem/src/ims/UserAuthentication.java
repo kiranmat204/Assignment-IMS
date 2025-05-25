@@ -9,5 +9,8 @@ package ims;
  * @author kiranmat
  */
 public class UserAuthentication {
-    
+    public static boolean authenticate(String username, String password) {
+        // Placeholder logic. Replace with DB check or hashed password comparison
+        return "admin".equals(username) && "password".equals(password);
+    }
 }
