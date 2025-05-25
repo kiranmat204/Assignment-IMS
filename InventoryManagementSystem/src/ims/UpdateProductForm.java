@@ -16,16 +16,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class UpdateProductForm {
-
-    private JFrame frame;
+public class UpdateProductForm extends JPanel {
 
     public UpdateProductForm() {
-        frame = new JFrame("Update Product");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setLayout(new GridLayout(8, 2));
+        setLayout(new GridLayout(4, 2, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding around panel
 
         // Create labels and text fields
         JLabel productIdLabel = new JLabel("Product ID:");
@@ -37,38 +32,35 @@ public class UpdateProductForm {
 
         JButton updateButton = new JButton("Update Product");
 
-        // Add components to the frame
-        frame.add(productIdLabel);
-        frame.add(productIdField);
-        frame.add(quantityLabel);
-        frame.add(quantityField);
-        frame.add(priceLabel);
-        frame.add(priceField);
-        frame.add(new JLabel());  // Empty label for alignment
-        frame.add(updateButton);
+        // Add components to the panel
+        add(productIdLabel);
+        add(productIdField);
+        add(quantityLabel);
+        add(quantityField);
+        add(priceLabel);
+        add(priceField);
+        add(new JLabel());  // Empty label for spacing
+        add(updateButton);
 
-        // Add button action to handle updating the product
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String productId = productIdField.getText();
-                int newQuantity = Integer.parseInt(quantityField.getText());
-                double newPrice = Double.parseDouble(priceField.getText());
+        // Update button logic
+        updateButton.addActionListener((ActionEvent e) -> {
+            try {
+                String productId = productIdField.getText().trim();
+                int newQuantity = Integer.parseInt(quantityField.getText().trim());
+                double newPrice = Double.parseDouble(priceField.getText().trim());
 
-                // Update the product using ProductDAO
                 ProductDAO productDAO = new ProductDAO();
-                boolean result = productDAO.updateProductQuantity(productId, newQuantity);
-                result = result && productDAO.updateProductPrice(productId, newPrice);
+                boolean result = productDAO.updateProductQuantity(productId, newQuantity)
+                                && productDAO.updateProductPrice(productId, newPrice);
 
                 if (result) {
-                    JOptionPane.showMessageDialog(frame, "Product updated successfully!");
-                    frame.dispose(); // Close form after successful update
+                    JOptionPane.showMessageDialog(this, "Product updated successfully!");
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Failed to update product.");
+                    JOptionPane.showMessageDialog(this, "Failed to update product.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Quantity and Price must be valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
-        frame.setVisible(true);
     }
 }

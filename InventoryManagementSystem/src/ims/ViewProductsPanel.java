@@ -9,28 +9,21 @@ package ims;
  * @author ankur
  */
 
-
-//import ims.core.Product;
-//import ims.core.ProductDAO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-public class ViewProductsPanel {
-    private JFrame frame;
+public class ViewProductsPanel extends JPanel {
 
     public ViewProductsPanel() {
-        frame = new JFrame("View Products");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         String[] columnNames = {"Product ID", "Name", "Brand", "Category", "Quantity", "Price", "Supplier"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         JTable table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
-        frame.add(scrollPane, BorderLayout.CENTER);
 
         // Fetch products from database
         ProductDAO productDAO = new ProductDAO();
@@ -40,7 +33,7 @@ public class ViewProductsPanel {
             Object[] row = {
                 product.getProductId(),
                 product.getProductName(),
-                product.getProductBrand(),  
+                product.getProductBrand(),
                 product.getCategory(),
                 product.getQuantity(),
                 product.getPrice(),
@@ -49,6 +42,7 @@ public class ViewProductsPanel {
             model.addRow(row);
         }
 
-        frame.setVisible(true);
+        add(new JLabel("Product List", SwingConstants.CENTER), BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
     }
 }

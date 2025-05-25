@@ -9,22 +9,16 @@ package ims;
  * @author ankur
  */
 
-//import ims.core.Product;
-//import ims.core.ProductDAO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class AddProductForm {
-    private JFrame frame;
+
+public class AddProductForm extends JPanel {
 
     public AddProductForm() {
-        frame = new JFrame("Add Product");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setLayout(new GridLayout(8, 2));
+        setLayout(new GridLayout(8, 2, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // padding
 
         // Create labels and text fields
         JLabel productIdLabel = new JLabel("Product ID:");
@@ -44,29 +38,27 @@ public class AddProductForm {
 
         JButton addButton = new JButton("Add Product");
 
-        // Add components to the frame
-        frame.add(productIdLabel);
-        frame.add(productIdField);
-        frame.add(productNameLabel);
-        frame.add(productNameField);
-        frame.add(supplierLabel);
-        frame.add(supplierField);
-        frame.add(categoryLabel);
-        frame.add(categoryField);
-        frame.add(productBrandLabel);
-        frame.add(productBrandField);
-        frame.add(quantityLabel);
-        frame.add(quantityField);
-        frame.add(priceLabel);
-        frame.add(priceField);
-        frame.add(new JLabel());  // Empty label for alignment
-        frame.add(addButton);
+        // Add components to the panel
+        add(productIdLabel);
+        add(productIdField);
+        add(productNameLabel);
+        add(productNameField);
+        add(supplierLabel);
+        add(supplierField);
+        add(categoryLabel);
+        add(categoryField);
+        add(productBrandLabel);
+        add(productBrandField);
+        add(quantityLabel);
+        add(quantityField);
+        add(priceLabel);
+        add(priceField);
+        add(new JLabel());  // Empty label for alignment
+        add(addButton);
 
         // Add button action
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            try{
+        addButton.addActionListener((ActionEvent e) -> {
+            try {
                 String productId = productIdField.getText();
                 String productName = productNameField.getText();
                 String supplier = supplierField.getText();
@@ -77,21 +69,16 @@ public class AddProductForm {
 
                 Product product = new Product(productId, supplier, category, productBrand, productName, quantity, price);
 
-                // You can use ProductDAO here to add the product to the database
                 ProductDAO productDAO = new ProductDAO();
                 if (productDAO.addProduct(product)) {
-                    JOptionPane.showMessageDialog(frame, "Product added successfully!");
-                    frame.dispose(); // Close form after successful addition
+                    JOptionPane.showMessageDialog(this, "Product added successfully!");
+                    // Optionally, clear fields here
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Failed to add product.");
+                    JOptionPane.showMessageDialog(this, "Failed to add product.");
                 }
-            }catch(NumberFormatException ex){
-                
-                JOptionPane.showMessageDialog(frame, "Quantity and Price must be valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Quantity and Price must be valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
-        frame.setVisible(true);
     }
 }
