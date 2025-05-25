@@ -13,62 +13,54 @@ import java.awt.event.ActionListener;
  *
  * @author kiranmat
  */
-public class DeleteProductForm {
+public class DeleteProductForm extends JPanel {
 
-    protected JFrame frame;
-    
     public DeleteProductForm() {
-        frame = new JFrame("Delete Product");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 200);
-        frame.setLocationRelativeTo(null);
-        
-        frame.setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding around panel
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,10,10,10);
-        
+        gbc.insets = new Insets(10, 10, 10, 10);
+
         JLabel productIDLabel = new JLabel("Product ID:");
-        JTextField productIDField = new JTextField(10);
+        JTextField productIDField = new JTextField(15);
         JButton inputConfirmButton = new JButton("Confirm Delete");
-        
+
+        // Add Product ID label
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        frame.add(productIDLabel,gbc);
-        
+        add(productIDLabel, gbc);
+
+        // Add Product ID text field
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.EAST;
-        frame.add(productIDField,gbc);
-        
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(productIDField, gbc);
+
+        // Add Confirm Delete button
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        frame.add(inputConfirmButton,gbc);
-        
-        inputConfirmButton.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try{
-                    ProductDAO productDAO = new ProductDAO();
-                    
-                    String productId = productIDField.getText();
-                    boolean result = productDAO.removeProduct(productId);
-                    if(result){
-                        JOptionPane.showMessageDialog(frame, "Product deleted successfully!");
-                        frame.dispose();
-                    }
-                    else{
-                        JOptionPane.showMessageDialog(frame, "Product ID not found!");
-                    }
-                }
-                catch(NumberFormatException ex){
-                    JOptionPane.showMessageDialog(frame, "Enter a valid product ID!");
-                }
+        add(inputConfirmButton, gbc);
+
+        // Button action
+        inputConfirmButton.addActionListener((ActionEvent e) -> {
+            String productId = productIDField.getText().trim();
+
+            if (productId.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter a Product ID.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-        
+
+            ProductDAO productDAO = new ProductDAO();
+            boolean result = productDAO.removeProduct(productId);
+            if (result) {
+                JOptionPane.showMessageDialog(this, "Product deleted successfully!");
+                productIDField.setText("");
+            } else {
+                JOptionPane.showMessageDialog(this, "Product ID not found!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
-        frame.setVisible(true);
     }
 }

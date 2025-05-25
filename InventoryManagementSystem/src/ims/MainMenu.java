@@ -15,6 +15,7 @@ public class MainMenu {
 
     private JFrame frame;
     ProductDAO productDAO = new ProductDAO();
+    private JPanel contentPanel;
 
     public void showMainMenu() {
         System.out.println("Testing Derby connection...");
@@ -86,11 +87,37 @@ public class MainMenu {
         frame.setContentPane(backgroundPanel);
         frame.setVisible(true);
 
+        contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setOpaque(false);
+        backgroundPanel.add(contentPanel, BorderLayout.CENTER);
+
         // Button actions
-        addProductButton.addActionListener(e -> new AddProductForm());
-        viewProductsButton.addActionListener(e -> new ViewProductsPanel());
-        updateProductButton.addActionListener(e -> new UpdateProductForm());
-        deleteProductButton.addActionListener(e -> new DeleteProductForm());
+        addProductButton.addActionListener(e -> {
+            contentPanel.removeAll();
+            contentPanel.add(new AddProductForm(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+        viewProductsButton.addActionListener(e -> {
+            contentPanel.removeAll();
+            contentPanel.add(new ViewProductsPanel(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+        updateProductButton.addActionListener(e -> {
+            contentPanel.removeAll();
+            contentPanel.add(new UpdateProductForm(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+
+        deleteProductButton.addActionListener(e -> {
+            contentPanel.removeAll();
+            contentPanel.add(new DeleteProductForm(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+
     }
 
     public static void main(String[] args) {

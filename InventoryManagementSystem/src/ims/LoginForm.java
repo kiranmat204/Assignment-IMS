@@ -4,78 +4,105 @@
  */
 package ims;
 
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *
  * @author ankur
  */
-public class LoginForm {
-    
+public class LoginForm extends JDialog {
+
     private JPasswordField passwordField;
     private JTextField usernameField;
-    
+
     public static final int LOGIN_SUCCESS = 1;
     public static final int LOGIN_TRY_AGAIN = 0;
     public static final int LOGIN_CANCEL = -1;
 
-    public int showLoginDialog() {
+    private int loginResult = LOGIN_CANCEL;
+
+    public LoginForm() {
+        setTitle("Login");
+        setSize(400, 250);  // Set window size here
+        setModal(true);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setLayout(new GridBagLayout());  // Use GridBagLayout for alignment
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        Font labelFont = new Font("SansSerif", Font.BOLD, 14);
 
         usernameField = new JTextField(15);
         passwordField = new JPasswordField(15);
 
-        panel.add(new JLabel("Username:"));
-        panel.add(usernameField);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(new JLabel("Password:"));
-        panel.add(passwordField);
+        // Username label
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel.setFont(labelFont);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(usernameLabel, gbc);
 
-        int result = JOptionPane.showConfirmDialog(null, panel,
-                "Login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        panel.add(usernameField, gbc);
 
-        if (result == JOptionPane.OK_OPTION) {
-            String user = usernameField.getText();
-            String pass = new String(passwordField.getPassword());
+        // Password label
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordLabel.setFont(labelFont);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(passwordLabel, gbc);
 
-            if (authenticate(user, pass)) {
-                return LOGIN_SUCCESS;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panel.add(passwordField, gbc);
+
+        // Buttons
+        JButton loginButton = new JButton("Login");
+        JButton cancelButton = new JButton("Cancel");
+
+        loginButton.addActionListener(e -> {
+            if (authenticate(usernameField.getText(), new String(passwordField.getPassword()))) {
+                loginResult = LOGIN_SUCCESS;
+                dispose();
             } else {
-                int retry = JOptionPane.showOptionDialog(null,
-                        "Invalid credentials. Try again?",
-                        "Login Failed",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE,
-                        null,
-                        new Object[]{"Try Again", "Exit"},
-                        "Try Again");
-
-                if (retry == JOptionPane.YES_OPTION) {
-                    return LOGIN_TRY_AGAIN;
-                } else {
-                    return LOGIN_CANCEL;
-                }
+                JOptionPane.showMessageDialog(this, "Invalid credentials.", "Login Failed", JOptionPane.WARNING_MESSAGE);
+                loginResult = LOGIN_TRY_AGAIN;
             }
-        } else {
-            return LOGIN_CANCEL;
-        }
+        });
+
+        cancelButton.addActionListener(e -> {
+            loginResult = LOGIN_CANCEL;
+            dispose();
+        });
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(loginButton);
+        buttonPanel.add(cancelButton);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(buttonPanel, gbc);
+
+        setContentPane(panel);
+    }
+
+    public int showLoginDialog() {
+        setVisible(true);
+        return loginResult;
     }
 
     private boolean authenticate(String username, String password) {
-        // Replace with DB logic later
         return "admin".equals(username) && "password".equals(password);
     }
 }
