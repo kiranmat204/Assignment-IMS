@@ -26,8 +26,12 @@ public class LoginForm {
     
     private JPasswordField passwordField;
     private JTextField usernameField;
+    
+    public static final int LOGIN_SUCCESS = 1;
+    public static final int LOGIN_TRY_AGAIN = 0;
+    public static final int LOGIN_CANCEL = -1;
 
-    public boolean showLoginDialog() {
+    public int showLoginDialog() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -47,9 +51,26 @@ public class LoginForm {
             String user = usernameField.getText();
             String pass = new String(passwordField.getPassword());
 
-            return authenticate(user, pass);
+            if (authenticate(user, pass)) {
+                return LOGIN_SUCCESS;
+            } else {
+                int retry = JOptionPane.showOptionDialog(null,
+                        "Invalid credentials. Try again?",
+                        "Login Failed",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        new Object[]{"Try Again", "Exit"},
+                        "Try Again");
+
+                if (retry == JOptionPane.YES_OPTION) {
+                    return LOGIN_TRY_AGAIN;
+                } else {
+                    return LOGIN_CANCEL;
+                }
+            }
         } else {
-            return false;
+            return LOGIN_CANCEL;
         }
     }
 
