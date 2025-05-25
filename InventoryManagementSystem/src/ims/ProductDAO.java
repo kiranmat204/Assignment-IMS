@@ -35,30 +35,28 @@ public class ProductDAO {
     }
 
     // Get a product by ID
-   public Product getProductById(String productId) {
-    Product product = null;
-    try (
-        Connection conn = getConnection();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Product WHERE productId = ?")
-    ) {
-        stmt.setString(1, productId);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            product = new Product(
-                rs.getString("productId"),
-                rs.getString("supplier"),
-                rs.getString("category"),
-                rs.getString("productBrand"),
-                rs.getString("productName"),
-                rs.getInt("quantity"),
-                rs.getDouble("price")
-            );
+    public Product getProductById(String productId) {
+        Product product = null;
+        try (
+                Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Product WHERE productId = ?")) {
+            stmt.setString(1, productId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                product = new Product(
+                        rs.getString("productId"),
+                        rs.getString("supplier"),
+                        rs.getString("category"),
+                        rs.getString("productBrand"),
+                        rs.getString("productName"),
+                        rs.getInt("quantity"),
+                        rs.getDouble("price")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Or log this
         }
-    } catch (SQLException e) {
-        e.printStackTrace(); // Or log this
+        return product;
     }
-    return product;
-}
 
     // Update product quantity
     public boolean updateProductQuantity(String productId, int newQuantity) {
@@ -128,5 +126,20 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return productList;
+    }
+
+    public List<String> getAllProductIds() {
+        List<String> productIds = new ArrayList<>();
+        String sql = "SELECT productId FROM Product";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                productIds.add(rs.getString("productId"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productIds;
     }
 }

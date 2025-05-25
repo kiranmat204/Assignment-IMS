@@ -8,80 +8,167 @@ package ims;
  *
  * @author ankur
  */
-//import ims.core.ProductDAO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.List;
 
 public class UpdateProductForm extends JPanel {
 
+    private JComboBox<String> productIdComboBox;
+    private JTextField brandField;
+    private JTextField categoryField;
+    private JTextField quantityField;
+    private JTextField priceField;
+    private JTextField supplierField;
+    private JTextField newQuantityField;
+    private JTextField newPriceField;
+    private ProductDAO productDAO;
+    private JTextField productNameField;
+
     public UpdateProductForm() {
-        setLayout(new GridLayout(4, 2, 10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding around panel
-        Font boldFont = new Font("Arial", Font.BOLD, 20);
-        
+        productDAO = new ProductDAO();
 
-        // Create labels and text fields
-        JLabel productIdLabel = new JLabel("Product ID:");
-        productIdLabel.setFont(boldFont);
-        JTextField productIdField = new JTextField();
-        productIdField.setPreferredSize(new Dimension(100, 10));
-        
-        JLabel quantityLabel = new JLabel("New Quantity:");
-        quantityLabel.setFont(boldFont);
-        JTextField quantityField = new JTextField();
-        quantityField.setPreferredSize(new Dimension(100, 10));
-        
-        JLabel priceLabel = new JLabel("New Price:");
-        priceLabel.setFont(boldFont);
-        JTextField priceField = new JTextField();
-        priceField.setPreferredSize(new Dimension(100, 10));
-        
+        setLayout(new BorderLayout(15, 15));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        
-        
+        Font labelFont = new Font("Arial", Font.BOLD, 18);
+        Font fieldFont = new Font("Arial", Font.PLAIN, 16);
+
+        // Fetch product IDs
+        List<String> productIds = productDAO.getAllProductIds();
+
+        // Initialize fields
+        productIdComboBox = new JComboBox<>();
+        productIdComboBox.addItem("--- Select Product ID ---");
+        for (String id : productIds) {
+            productIdComboBox.addItem(id);
+        }
+        productIdComboBox.setFont(fieldFont);
+
+        brandField = createInfoField(fieldFont);
+        productNameField = createInfoField(fieldFont);
+        categoryField = createInfoField(fieldFont);
+        quantityField = createInfoField(fieldFont);
+        priceField = createInfoField(fieldFont);
+        supplierField = createInfoField(fieldFont);
+        newQuantityField = new JTextField(10);
+        newPriceField = new JTextField(10);
+        newQuantityField.setFont(fieldFont);
+        newPriceField.setFont(fieldFont);
+
+        // Details panel (3 rows of 2 columns)
+        JPanel productDetailsPanel = new JPanel(new GridLayout(7, 2, 15, 15));
+        productDetailsPanel.add(createLabel("Product ID:", labelFont));
+        productDetailsPanel.add(productIdComboBox);
+        productDetailsPanel.add(createLabel("Brand:", labelFont));
+        productDetailsPanel.add(brandField);
+
+        productDetailsPanel.add(createLabel("Product Name:", labelFont));
+        productDetailsPanel.add(productNameField);
+
+        productDetailsPanel.add(createLabel("Category:", labelFont));
+        productDetailsPanel.add(categoryField);
+        productDetailsPanel.add(createLabel("Current Quantity:", labelFont));
+        productDetailsPanel.add(quantityField);
+
+        productDetailsPanel.add(createLabel("Price:", labelFont));
+        productDetailsPanel.add(priceField);
+        productDetailsPanel.add(createLabel("Supplier:", labelFont));
+        productDetailsPanel.add(supplierField);
+
+        // Update panel for new values
+        JPanel updateFieldsPanel = new JPanel(new GridLayout(1, 5, 15, 10));
+        updateFieldsPanel.add(createLabel("New Quantity:", labelFont));
+        updateFieldsPanel.add(newQuantityField);
+        updateFieldsPanel.add(createLabel("New Price:", labelFont));
+        updateFieldsPanel.add(newPriceField);
+
+        // Update Button
         JButton updateButton = new JButton("Update Product");
-        updateButton.setFont(boldFont);
-
-        // Set background to light blue and text to white
-        updateButton.setBackground(new Color(0, 51, 102)); // dark blue
-        updateButton.setForeground(Color.WHITE);             // White text
-
-        // Optional: Improve visual appearance
+        updateButton.setFont(labelFont);
+        updateButton.setBackground(new Color(0, 51, 102));
+        updateButton.setForeground(Color.WHITE);
         updateButton.setFocusPainted(false);
         updateButton.setBorderPainted(false);
         updateButton.setOpaque(true);
 
-        // Add components to the panel
-        add(productIdLabel);
-        add(productIdField);
-        add(quantityLabel);
-        add(quantityField);
-        add(priceLabel);
-        add(priceField);
-        add(new JLabel());  // Empty label for spacing
-        add(updateButton);
+        // Layout all parts
+        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
+        centerPanel.add(updateFieldsPanel, BorderLayout.NORTH);
+        centerPanel.add(updateButton, BorderLayout.SOUTH);
 
-        // Update button logic
+        add(productDetailsPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
+
+        // Load product details when selection changes
+        productIdComboBox.addActionListener(e -> {
+            String selectedId = (String) productIdComboBox.getSelectedItem();
+            if (selectedId != null && !selectedId.equals("--- Select Product ID ---")) {
+                loadProductDetails(selectedId);
+            } else {
+                clearFormFields(); // Reset if default item is selected
+            }
+        });
+
+        // Update logic
         updateButton.addActionListener((ActionEvent e) -> {
             try {
-                String productId = productIdField.getText().trim();
-                int newQuantity = Integer.parseInt(quantityField.getText().trim());
-                double newPrice = Double.parseDouble(priceField.getText().trim());
+                String productId = (String) productIdComboBox.getSelectedItem();
+                int newQuantity = Integer.parseInt(newQuantityField.getText().trim());
+                double newPrice = Double.parseDouble(newPriceField.getText().trim());
 
-                ProductDAO productDAO = new ProductDAO();
                 boolean result = productDAO.updateProductQuantity(productId, newQuantity) &&
                         productDAO.updateProductPrice(productId, newPrice);
 
                 if (result) {
                     JOptionPane.showMessageDialog(this, "Product updated successfully!");
+                    productIdComboBox.setSelectedIndex(0); // Reset to "--- Select Product ID ---"
+                    clearFormFields();
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to update product.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Quantity and Price must be valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+
+    private JTextField createInfoField(Font font) {
+        JTextField field = new JTextField(10);
+        field.setEditable(false);
+        field.setFont(font);
+        return field;
+    }
+
+    private JLabel createLabel(String text, Font font) {
+        JLabel label = new JLabel(text);
+        label.setFont(font);
+        return label;
+    }
+
+    private void loadProductDetails(String productId) {
+        Product product = productDAO.getProductById(productId);
+        if (product != null) {
+            brandField.setText(product.getProductBrand());
+            productNameField.setText(product.getProductName());
+            categoryField.setText(product.getCategory());
+            quantityField.setText(String.valueOf(product.getQuantity()));
+            priceField.setText(String.valueOf(product.getPrice()));
+            supplierField.setText(product.getSupplier());
+            newQuantityField.setText("");
+            newPriceField.setText("");
+        }
+
+    }
+
+    private void clearFormFields() {
+        brandField.setText("");
+        categoryField.setText("");
+        quantityField.setText("");
+        priceField.setText("");
+        supplierField.setText("");
+        newQuantityField.setText("");
+        newPriceField.setText("");
     }
 }
