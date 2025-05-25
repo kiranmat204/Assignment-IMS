@@ -20,6 +20,8 @@ public class AddProductForm extends JPanel {
         setLayout(new GridLayout(8, 2, 10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        
+
         Font boldFont = new Font("Arial", Font.BOLD, 18);
 
         JLabel productIdLabel = new JLabel("Product ID:");
@@ -28,8 +30,8 @@ public class AddProductForm extends JPanel {
 
         JLabel productNameLabel = new JLabel("Product Name:");
         productNameLabel.setFont(boldFont);
-        JTextField productNameField = new JTextField();
-        productNameField.setEnabled(false);
+        JComboBox<String> productNameComboBox = new JComboBox<>();
+        productNameComboBox.setEnabled(false);
 
         JLabel supplierLabel = new JLabel("Supplier:");
         supplierLabel.setFont(boldFont);
@@ -37,11 +39,11 @@ public class AddProductForm extends JPanel {
 
         JLabel categoryLabel = new JLabel("Category:");
         categoryLabel.setFont(boldFont);
-        JTextField categoryField = new JTextField();
+        JComboBox<String> categoryComboBox = new JComboBox<>();
 
         JLabel productBrandLabel = new JLabel("Product Brand:");
         productBrandLabel.setFont(boldFont);
-        JTextField productBrandField = new JTextField();
+        JComboBox<String> productBrandComboBox = new JComboBox<>();
 
         JLabel quantityLabel = new JLabel("Quantity:");
         quantityLabel.setFont(boldFont);
@@ -52,7 +54,6 @@ public class AddProductForm extends JPanel {
         JTextField priceField = new JTextField();
 
         JButton addButton = new JButton("Add Product");
-        addButton = new JButton("Add Product");
         addButton.setFont(boldFont);
         addButton.setBackground(new Color(0, 51, 102));
         addButton.setForeground(Color.WHITE);
@@ -60,17 +61,17 @@ public class AddProductForm extends JPanel {
         addButton.setContentAreaFilled(true);
         addButton.setBorderPainted(false);
 
-        // Add to panel
+        // Add components to panel
         add(productIdLabel);
         add(productIdField);
         add(productNameLabel);
-        add(productNameField);
+        add(productNameComboBox);
         add(supplierLabel);
         add(supplierField);
         add(categoryLabel);
-        add(categoryField);
+        add(categoryComboBox);
         add(productBrandLabel);
-        add(productBrandField);
+        add(productBrandComboBox);
         add(quantityLabel);
         add(quantityField);
         add(priceLabel);
@@ -78,68 +79,91 @@ public class AddProductForm extends JPanel {
         add(new JLabel());
         add(addButton);
 
+        // DAOs
         ProductDAO dao = new ProductDAO();
+        ItemDAO itemDAO = new ItemDAO();
+        CategoryDAO categoryDAO = new CategoryDAO();
+        BrandDAO brandDAO = new BrandDAO();
 
-        // InputVerifier for Product ID
+        // Populate combo boxes
+        productNameComboBox.addItem("-- Select Product --");
+        for (String item : itemDAO.getAllItemNames()) {
+            productNameComboBox.addItem(item);
+        }
+
+        categoryComboBox.addItem("-- Select Category --");
+
+        for (String category : categoryDAO.getAllCategories()) {
+            categoryComboBox.addItem(category);
+        }
+
+        productBrandComboBox.addItem("-- Select Brand --");
+        for (String brand : brandDAO.getAllBrands()) {
+            productBrandComboBox.addItem(brand);
+        }
+
+        // Product ID focus lost: check if exists
         productIdField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 String id = productIdField.getText().trim();
-                System.out.println("User entered ID: " + id); // DEBUG
-
                 if (id.isEmpty()) {
-                    productNameField.setEnabled(false);
+                    productNameComboBox.setEnabled(false);
                     return;
                 }
 
                 Product product = dao.getProductById(id);
-                System.out.println("Product found: " + (product != null)); // DEBUG
-
                 if (product != null) {
                     JOptionPane.showMessageDialog(AddProductForm.this,
                             "Product ID already exists.",
                             "Duplicate Product ID", JOptionPane.WARNING_MESSAGE);
-                    productNameField.setEnabled(true);
-                    productNameField.requestFocus();
+                    productNameComboBox.setEnabled(true);
+                    productNameComboBox.requestFocus();
                 } else {
-                    productNameField.setEnabled(true);
+                    productNameComboBox.setEnabled(true);
                 }
             }
         });
 
-        // InputVerifier for Product Name
-        productNameField.setInputVerifier(new InputVerifier() {
+        // Verify Product Name against existing ID
+        productNameComboBox.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent input) {
                 String id = productIdField.getText().trim();
-                String name = productNameField.getText().trim();
+                String name = (String) productNameComboBox.getSelectedItem();
 
-                if (id.isEmpty() || name.isEmpty()) {
-                    return true; // Nothing to check
+                if (id.isEmpty() || name == null || name.equals("-- Select Product --")) {
+                    return true;
                 }
 
                 Product product = dao.getProductById(id);
-                if (product != null) {
-                    if (!product.getProductName().equalsIgnoreCase(name)) {
-                        JOptionPane.showMessageDialog(AddProductForm.this,
-                                "Product name does not match the existing Product ID!",
-                                "Name Mismatch", JOptionPane.ERROR_MESSAGE);
-                        return false;  // don't allow focus to leave Product Name field
-                    }
+                if (product != null && !product.getProductName().equalsIgnoreCase(name)) {
+                    JOptionPane.showMessageDialog(AddProductForm.this,
+                            "Product name does not match the existing Product ID!",
+                            "Name Mismatch", JOptionPane.ERROR_MESSAGE);
+                    return false;
                 }
                 return true;
             }
         });
 
+        // Add button logic
         addButton.addActionListener((ActionEvent e) -> {
             try {
                 String id = productIdField.getText().trim();
-                String name = productNameField.getText().trim();
+                String name = (String) productNameComboBox.getSelectedItem();
                 String supplier = supplierField.getText().trim();
-                String category = categoryField.getText().trim();
-                String brand = productBrandField.getText().trim();
+                String category = (String) categoryComboBox.getSelectedItem();
+                String brand = (String) productBrandComboBox.getSelectedItem();
                 int qty = Integer.parseInt(quantityField.getText().trim());
                 double price = Double.parseDouble(priceField.getText().trim());
+
+                if (name == null || name.equals("-- Select Product --") ||
+                        category == null || category.equals("-- Select Category --") ||
+                        brand == null || brand.equals("-- Select Brand --")) {
+                    JOptionPane.showMessageDialog(this, "Please select valid options from dropdowns.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 Product existing = dao.getProductById(id);
 
@@ -157,13 +181,13 @@ public class AddProductForm extends JPanel {
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Product added successfully!");
                     productIdField.setText("");
-                    productNameField.setText("");
+                    productNameComboBox.setSelectedIndex(0);
+                    categoryComboBox.setSelectedIndex(0);
+                    productBrandComboBox.setSelectedIndex(0);
                     supplierField.setText("");
-                    categoryField.setText("");
-                    productBrandField.setText("");
                     quantityField.setText("");
                     priceField.setText("");
-                    productNameField.setEnabled(false);
+                    productNameComboBox.setEnabled(false);
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to add product.");
                 }
