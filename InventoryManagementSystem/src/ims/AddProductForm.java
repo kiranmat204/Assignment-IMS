@@ -20,8 +20,6 @@ public class AddProductForm extends JPanel {
         setLayout(new GridLayout(8, 2, 10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        
-
         Font boldFont = new Font("Arial", Font.BOLD, 18);
 
         JLabel productIdLabel = new JLabel("Product ID:");
@@ -35,7 +33,8 @@ public class AddProductForm extends JPanel {
 
         JLabel supplierLabel = new JLabel("Supplier:");
         supplierLabel.setFont(boldFont);
-        JTextField supplierField = new JTextField();
+        JComboBox<String> supplierComboBox = new JComboBox<>();
+        supplierComboBox.setEditable(true);
 
         JLabel categoryLabel = new JLabel("Category:");
         categoryLabel.setFont(boldFont);
@@ -67,7 +66,7 @@ public class AddProductForm extends JPanel {
         add(productNameLabel);
         add(productNameComboBox);
         add(supplierLabel);
-        add(supplierField);
+        add(supplierComboBox);
         add(categoryLabel);
         add(categoryComboBox);
         add(productBrandLabel);
@@ -84,6 +83,7 @@ public class AddProductForm extends JPanel {
         ItemDAO itemDAO = new ItemDAO();
         CategoryDAO categoryDAO = new CategoryDAO();
         BrandDAO brandDAO = new BrandDAO();
+        SupplierDAO supplierDAO = new SupplierDAO();
 
         // Populate combo boxes
         productNameComboBox.addItem("-- Select Product --");
@@ -100,6 +100,11 @@ public class AddProductForm extends JPanel {
         productBrandComboBox.addItem("-- Select Brand --");
         for (String brand : brandDAO.getAllBrands()) {
             productBrandComboBox.addItem(brand);
+        }
+
+        supplierComboBox.addItem("-- Select Supplier --");
+        for (String supplier : supplierDAO.getAllSuppliers()) {
+            supplierComboBox.addItem(supplier);
         }
 
         // Product ID focus lost: check if exists
@@ -152,7 +157,7 @@ public class AddProductForm extends JPanel {
             try {
                 String id = productIdField.getText().trim();
                 String name = (String) productNameComboBox.getSelectedItem();
-                String supplier = supplierField.getText().trim();
+                String supplier = ((String) supplierComboBox.getEditor().getItem()).trim();
                 String category = (String) categoryComboBox.getSelectedItem();
                 String brand = (String) productBrandComboBox.getSelectedItem();
                 int qty = Integer.parseInt(quantityField.getText().trim());
@@ -164,6 +169,23 @@ public class AddProductForm extends JPanel {
                     JOptionPane.showMessageDialog(this, "Please select valid options from dropdowns.", "Input Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+
+                // Check if supplier exists
+                if (!supplierDAO.getAllSuppliers().contains(supplier)) {
+                    supplierDAO.addSupplier(supplier); // You need to create this method
+                }
+
+                boolean existsInCombo = false;
+                for (int i = 0; i < supplierComboBox.getItemCount(); i++) {
+                    if (supplierComboBox.getItemAt(i).equalsIgnoreCase(supplier)) {
+                        existsInCombo = true;
+                        break;
+                    }
+                }
+                if (!existsInCombo) {
+                    supplierComboBox.addItem(supplier);
+                }
+                supplierComboBox.setSelectedItem(supplier); // Optional: re-select it
 
                 Product existing = dao.getProductById(id);
 
@@ -184,7 +206,7 @@ public class AddProductForm extends JPanel {
                     productNameComboBox.setSelectedIndex(0);
                     categoryComboBox.setSelectedIndex(0);
                     productBrandComboBox.setSelectedIndex(0);
-                    supplierField.setText("");
+                    supplierComboBox.setSelectedItem("");
                     quantityField.setText("");
                     priceField.setText("");
                     productNameComboBox.setEnabled(false);

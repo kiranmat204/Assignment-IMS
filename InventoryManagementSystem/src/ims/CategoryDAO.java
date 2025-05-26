@@ -15,14 +15,14 @@ import java.util.List;
 public class CategoryDAO {
     public List<String> getAllCategories() {
         List<String> categories = new ArrayList<>();
-        String sql = "SELECT CATEGORY_NAME FROM categories";  // Make sure CATEGORIES table exists exactly
+        String sql = "SELECT CATEGORY_NAME FROM CATEGORIES";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                categories.add(rs.getString("CATEGORY_NAME"));  // Column name uppercase
+                categories.add(rs.getString("CATEGORY_NAME"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -30,5 +30,4 @@ public class CategoryDAO {
 
         return categories;
     }
-
 }

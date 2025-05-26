@@ -13,13 +13,12 @@ import java.util.List;
  * @author ankur
  */
 public class BrandDAO {
+
     public List<String> getAllBrands() {
         List<String> brands = new ArrayList<>();
-        String sql = "SELECT BRAND_NAME FROM brands";
+        String sql = "SELECT BRAND_NAME FROM BRANDS";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 brands.add(rs.getString("BRAND_NAME"));
