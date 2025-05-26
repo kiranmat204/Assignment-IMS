@@ -148,6 +148,13 @@ public class MainMenu {
 
             if (loginResult == LoginForm.LOGIN_SUCCESS) {
                 authenticated = true;
+                
+                // Create tables before launching main menu
+            DatabaseTableSetup tableSetup = new DatabaseTableSetup();
+            tableSetup.initialiseTables(); 
+            
+            
+            
                 new MainMenu().showMainMenu();
             } else if (loginResult == LoginForm.LOGIN_TRY_AGAIN) {
                 // Loop continues

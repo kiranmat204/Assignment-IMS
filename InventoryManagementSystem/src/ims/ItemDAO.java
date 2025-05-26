@@ -13,21 +13,20 @@ import java.util.List;
  * @author ankur
  */
 public class ItemDAO {
-    public List<String> getAllItemNames() {
-        List<String> itemNames = new ArrayList<>();
-        String sql = "SELECT itemName FROM items";  // Adjust column name if needed
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+    public List<String> getAllItemNames() {
+        List<String> items = new ArrayList<>();
+        String sql = "SELECT ITEMNAME FROM ITEMS";
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                itemNames.add(rs.getString("itemName"));
+                items.add(rs.getString("ITEMNAME"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return itemNames;
+        return items;
     }
 }

@@ -154,5 +154,6 @@ public class DeleteProductForm extends JPanel {
         quantityField.setText("");
         priceField.setText("");
         supplierField.setText("");
+        productNameField.setText("");
     }
 }
