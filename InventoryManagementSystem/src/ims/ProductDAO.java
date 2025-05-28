@@ -79,15 +79,33 @@ public class ProductDAO {
 
     // Update product price
     public boolean updateProductPrice(String productId, double newPrice) {
-        String sql = "UPDATE Product SET price = ? WHERE productId = ?";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setDouble(1, newPrice);
-            stmt.setString(2, productId);
-            return stmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        String discountQuery = "SELECT sale FROM PRODUCT WHERE productId = ?";
+        String sql = "UPDATE Product SET price = ?, salePrice = ? WHERE productId = ?";
+        try(Connection conn = DatabaseConnection.getConnection();){
+            double salesPercentage = 0;
+            
+            try(PreparedStatement stmt = conn.prepareStatement(discountQuery)){
+                stmt.setString(1,productId);
+                try(ResultSet rs = stmt.executeQuery()){
+                    if(rs.next()){
+                        salesPercentage = rs.getDouble("sale");
+                    }
+                    else{
+                        return false;
+                    }
+                }
+            }
+            
+            double udpatedSalePrice = newPrice * (1-salesPercentage);
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setDouble(1, newPrice);
+                stmt.setDouble(2, udpatedSalePrice);
+                stmt.setString(3, productId);
+                return stmt.executeUpdate() > 0;
+            }
+        }
+        catch(SQLException ex){
+           ex.printStackTrace();
             return false;
         }
     }
