@@ -16,7 +16,7 @@ import java.util.List;
 public class ProductDAO {
 
     public boolean addProduct(Product product) {
-        String sql = "INSERT INTO Product (productId, productName, quantity, productBrand, price, category, supplier) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Product (productId, productName, quantity, productBrand, price, category, supplier, sale, salePrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, product.getProductId());
@@ -26,6 +26,8 @@ public class ProductDAO {
             stmt.setDouble(5, product.getPrice());
             stmt.setString(6, product.getCategory());
             stmt.setString(7, product.getSupplier());
+            stmt.setDouble(8, 0);
+            stmt.setDouble(9, product.getPrice());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -49,7 +51,9 @@ public class ProductDAO {
                         rs.getString("productBrand"),
                         rs.getString("productName"),
                         rs.getInt("quantity"),
-                        rs.getDouble("price")
+                        rs.getDouble("price"),
+                        rs.getDouble("sale"),
+                        rs.getDouble("salePrice")
                 );
             }
         } catch (SQLException e) {
@@ -117,7 +121,9 @@ public class ProductDAO {
                         rs.getString("productBrand"), // productBrand
                         rs.getString("productName"), // productName
                         rs.getInt("quantity"), // quantity
-                        rs.getDouble("price") // price
+                        rs.getDouble("price"), // price
+                        rs.getDouble("sale"),
+                        rs.getDouble("salePrice")
                 );
                 productList.add(product);
             }

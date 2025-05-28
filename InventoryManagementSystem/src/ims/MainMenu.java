@@ -53,6 +53,7 @@ public class MainMenu {
         JButton updateProductButton = new JButton("Update Product");
         JButton deleteProductButton = new JButton("Delete Product");
         JButton viewProductsButton = new JButton("Products Report");
+        JButton saleProductButton = new JButton("Set Product Sale");
 
         // Set font
         dashboardButton.setFont(buttonFont);
@@ -60,6 +61,7 @@ public class MainMenu {
         updateProductButton.setFont(buttonFont);
         deleteProductButton.setFont(buttonFont);
         viewProductsButton.setFont(buttonFont);
+        saleProductButton.setFont(buttonFont);
 
         // Optional: Make button sizes consistent
         Dimension buttonSize = new Dimension(200, 40);
@@ -68,6 +70,7 @@ public class MainMenu {
         updateProductButton.setMaximumSize(buttonSize);
         deleteProductButton.setMaximumSize(buttonSize);
         viewProductsButton.setMaximumSize(buttonSize);
+        saleProductButton.setMaximumSize(buttonSize);
 
         // Add buttons with consistent spacing (add strut AFTER each, except last)
         buttonPanel.add(dashboardButton);
@@ -79,6 +82,8 @@ public class MainMenu {
         buttonPanel.add(deleteProductButton);
         buttonPanel.add(Box.createVerticalStrut(20));
         buttonPanel.add(viewProductsButton);
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(saleProductButton);
 
         // TOP RIGHT: Logout button
         JButton logoutButton = new JButton("Logout");
@@ -134,6 +139,13 @@ public class MainMenu {
         dashboardButton.addActionListener(e -> {
             contentPanel.removeAll();
             contentPanel.add(new DashboardPanel(productDAO), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+        
+        saleProductButton.addActionListener(e -> {
+            contentPanel.removeAll();
+            contentPanel.add(new SaleProductForm(), BorderLayout.CENTER);
             contentPanel.revalidate();
             contentPanel.repaint();
         });

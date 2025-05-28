@@ -162,6 +162,7 @@ public class AddProductForm extends JPanel {
                 String brand = (String) productBrandComboBox.getSelectedItem();
                 int qty = Integer.parseInt(quantityField.getText().trim());
                 double price = Double.parseDouble(priceField.getText().trim());
+                        
 
                 if (name == null || name.equals("-- Select Product --") ||
                         category == null || category.equals("-- Select Category --") ||
@@ -198,7 +199,7 @@ public class AddProductForm extends JPanel {
                     return;
                 }
 
-                Product newProduct = new Product(id, supplier, category, brand, name, qty, price);
+                Product newProduct = new Product(id, supplier, category, brand, name, qty, price, 0, price);
                 boolean success = dao.addProduct(newProduct);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Product added successfully!");
@@ -209,6 +210,7 @@ public class AddProductForm extends JPanel {
                     supplierComboBox.setSelectedItem("");
                     quantityField.setText("");
                     priceField.setText("");
+                    
                     productNameComboBox.setEnabled(false);
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to add product.");
