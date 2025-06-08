@@ -5,12 +5,10 @@
 package ims;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 
 
 /**
@@ -20,6 +18,7 @@ import java.sql.ResultSet;
 public class SaleProductForm extends JPanel{
     JLabel displayPercentageLabel;
     JTextField productIdField;
+    JComboBox productIdBox;
     JLabel displayPriceLabel;
     JComboBox setSaleBox;
     double currentSale;
@@ -29,15 +28,25 @@ public class SaleProductForm extends JPanel{
     SaleProductForm(){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        
         Font boldFont = new Font("Arial", Font.BOLD, 18);
         
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
         JLabel productIdLabel = new JLabel("Product ID:");
         productIdLabel.setFont(boldFont);
         
-        productIdField = new JTextField(50);
-        productIdField.setPreferredSize(new Dimension(180,25));
+        //productIdField = new JTextField(50);
+        //productIdField.setPreferredSize(new Dimension(180,25));
+        
+        productIdBox = new JComboBox();
+        productIdBox.setPreferredSize(new Dimension(180,25));
+        
+        IdDAO idDAO = new IdDAO();
+        List<String> productIds = idDAO.getAllIds();
+        
+        for(String id : productIds){
+            productIdBox.addItem(id);
+        }
+        
         
         JButton productFindButton  = new JButton("Find");
         productFindButton.setFont(boldFont);
@@ -49,7 +58,7 @@ public class SaleProductForm extends JPanel{
         productFindButton.setBorderPainted(false);
         
         row1.add(productIdLabel);
-        row1.add(productIdField);
+        row1.add(productIdBox);
         row1.add(productFindButton);
         
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
@@ -108,7 +117,7 @@ public class SaleProductForm extends JPanel{
     }
 
     private void findSalesPercentage() {
-        String checkID = productIdField.getText();
+        String checkID = (String)productIdBox.getSelectedItem();
         
         if(checkID.trim().isEmpty()){
             displayPercentageLabel.setForeground(Color.red);
@@ -145,9 +154,9 @@ public class SaleProductForm extends JPanel{
     }
     
     private void setNewSale(){
-        String checkId = productIdField.getText();
+        String checkID = (String)productIdBox.getSelectedItem();
         
-        if(checkId.trim().isEmpty()){
+        if(checkID.trim().isEmpty()){
             displayPercentageLabel.setForeground(Color.red);
             displayPercentageLabel.setText("Please don't leave the field empty!");
             return;
@@ -166,7 +175,7 @@ public class SaleProductForm extends JPanel{
             return;
         }
        
-        double orginalPrice = getActualPrice(checkId);
+        double orginalPrice = getActualPrice(checkID);
         
         if(orginalPrice < 0){
             displayPercentageLabel.setForeground(Color.red);
@@ -182,7 +191,7 @@ public class SaleProductForm extends JPanel{
             
             stmt.setDouble(1, checkSaleInput);
             stmt.setDouble(2, updatedPrice);
-            stmt.setString(3, checkId);
+            stmt.setString(3, checkID);
             stmt.executeUpdate();
             
             displayPercentageLabel.setForeground(Color.BLUE);
