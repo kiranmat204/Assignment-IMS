@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,9 +21,11 @@ import java.sql.*;
 public class ManageStockForm extends JPanel{
     private JComboBox<String> idBox;
     private JLabel stockLabel;
+    private JLabel displayItemStock;
     private DefaultTableModel model;
     private JTable table;
     private JScrollPane scrollPane;
+    private JTextField inputNewStock;
     
     
     public ManageStockForm(){
@@ -53,8 +57,15 @@ public class ManageStockForm extends JPanel{
         
         idBox = new JComboBox();
         idBox.setBounds(150,550,400,30);
+        idBox.addItem("Select");
         
-        JLabel displayItemStock = new JLabel("Stock: ");
+        List<String> ids = getLowStockIds();
+        
+        for(String id : ids){
+            idBox.addItem(id);
+        }
+        
+        displayItemStock = new JLabel("Stock: ");
         displayItemStock.setBounds(800, 550, 100, 30);
         displayItemStock.setFont(boldFont);
         
@@ -63,7 +74,7 @@ public class ManageStockForm extends JPanel{
         stockLabel.setBounds(50, 600, 100, 30);
         stockLabel.setFont(boldFont);
         
-        JTextField inputNewStock = new JTextField();
+        inputNewStock = new JTextField();
         inputNewStock.setBounds(150, 600, 200, 30);
         
         //Row 4 
@@ -94,9 +105,24 @@ public class ManageStockForm extends JPanel{
         loadProductData();
         
         idBox.addActionListener(e -> getIdStock());
+        addStock.addActionListener(e -> handleAddStock());
+        deductStock.addActionListener(e -> handleDeductStock());
+    }
+    
+    private void refreshIdComboBox(){
+        idBox.removeAllItems();
+        idBox.addItem("Select");
+        
+        List<String> ids = getLowStockIds();
+        
+        for(String id : ids){
+            idBox.addItem(id);
+        }
+        
+        idBox.setSelectedIndex(0);
     }
 
-    private void getIdStock() {
+    private int getIdStock() {
         String selected = (String) idBox.getSelectedItem();
         
         String query = "SELECT quantity FROM PRODUCT WHERE productId = ?";
@@ -108,15 +134,36 @@ public class ManageStockForm extends JPanel{
             
             if(rs.next()){
                 int displayQuantity = rs.getInt("quantity");
-                stockLabel.setText("Stock: "+displayQuantity);
+                displayItemStock.setText("Stock: "+displayQuantity);
+                return displayQuantity;
             }
         }
         catch(Exception ex){
             ex.printStackTrace();
         }
+        return -1;
+    }
+    
+    private List<String> getLowStockIds(){
+        List<String> list = new ArrayList<>();
+        String query = "SELECT productId FROM Product WHERE quantity < 6";
+        try(Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery()){
+            while(rs.next()){
+                String productId = rs.getString("productId");
+                list.add(productId);
+            }
+        }
+        catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        
+        return list;
     }
     
     private void loadProductData(){
+        model.setRowCount(0);
         String query = "SELECT productId, productName, category, quantity, price, salePrice FROM Product"
                 + " WHERE quantity < 6 ORDER BY quantity ASC";
         
@@ -131,7 +178,6 @@ public class ManageStockForm extends JPanel{
                 int quantity = rs.getInt("quantity");
                 double price = rs.getDouble("price");
                 double salePrice = rs.getDouble("salePrice");
-                
                 
                 Object[] row = {
                     productId,
@@ -148,5 +194,123 @@ public class ManageStockForm extends JPanel{
         catch(SQLException ex){
             ex.printStackTrace();
         }
+    }
+
+    private void handleAddStock() {
+        String checkID = (String) idBox.getSelectedItem();
+        String stockText = inputNewStock.getText().trim();
+        
+        if(checkID == null || checkID.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Please select an ID!");
+            return;
+        }
+        
+        if(stockText.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Enter an amount to add!");
+            return;
+        }
+        
+        try{
+            int stockAdd = Integer.parseInt(stockText);
+            if (stockAdd <= 0){
+                JOptionPane.showMessageDialog(this,"Enter an amount greater than 0!");
+                return;
+            }
+            
+            int currentStock = getIdStock();
+            if(currentStock == -1){
+                JOptionPane.showMessageDialog(this,"Error getting stock!");
+                return;
+            }
+            
+            int newStock = currentStock+stockAdd;
+            
+            if(updateStock(checkID, newStock)){
+                displayItemStock.setText("Stock: "+newStock);
+                inputNewStock.setText("");
+                
+                loadProductData();
+                refreshIdComboBox();
+                
+                JOptionPane.showMessageDialog(this, stockAdd+" stock successfully added!");
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Stock failed to add!");
+            }
+        }
+        catch(NumberFormatException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,"Enter a numerical value");
+        }
+    }
+
+    private void handleDeductStock() {
+        String checkID = (String) idBox.getSelectedItem();
+        String stockText = inputNewStock.getText().trim();
+        
+        if(checkID == null || checkID.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Please select an ID!");
+            return;
+        }
+        
+        if(stockText.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Enter an amount to add!");
+            return;
+        }
+        
+        try{
+            int stockDeduct = Integer.parseInt(stockText);
+            if (stockDeduct <= 0){
+                JOptionPane.showMessageDialog(this,"Enter an amount greater than 0!");
+                return;
+            }
+            
+            int currentStock = getIdStock();
+            if(currentStock == -1){
+                JOptionPane.showMessageDialog(this,"Error getting stock!");
+                return;
+            }
+            
+            int newStock = currentStock-stockDeduct;
+            
+            if(stockDeduct > currentStock){
+                JOptionPane.showMessageDialog(this,"Unable to remove. " + stockDeduct + "is greater than current stock!");
+                return;
+            }
+            
+            if(updateStock(checkID, newStock)){
+                displayItemStock.setText("Stock: "+newStock);
+                inputNewStock.setText("");
+                
+                loadProductData();
+                refreshIdComboBox();
+                
+                JOptionPane.showMessageDialog(this, stockDeduct+" stock successfully deducted!");
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Stock failed to remove!");
+            }
+        }
+        catch(NumberFormatException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,"Enter a numerical value");
+        }
+    }
+
+    private boolean updateStock(String productId, int newStock) {
+        String query = "UPDATE Product SET quantity = ? WHERE productId = ?";
+        
+        try(Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);){
+            
+            stmt.setInt(1, newStock);
+            stmt.setString(2, productId);
+            
+            return stmt.executeUpdate() > 0;
+        }
+        catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        return false;
     }
 }

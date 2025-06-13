@@ -12,3 +12,9 @@ os.arch=aarch64
 os.version=15.5
 derby.system.home=/Users/kiranmat/NetBeansProjects/Assignment-IMS/InventoryManagementSystem
 Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Fri Jun 13 18:33:55 NZST 2025: Shutting down Derby engine
+----------------------------------------------------------------
+Fri Jun 13 18:33:55 NZST 2025:
+Shutting down instance a816c00e-0197-679b-ff85-0000341c5423 on database directory /Users/kiranmat/NetBeansProjects/Assignment-IMS/InventoryManagementSystem/inventoryDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@1cf4f579 
+----------------------------------------------------------------
