@@ -81,6 +81,7 @@ public class DatabaseTableSetup {
                 + "price DECIMAL(10,2),"
                 + "category VARCHAR(50),"
                 + "supplier VARCHAR(50),"
+                + "retailPrice DECIMAL(10,2),"
                 + "sale DECIMAL(5,2),"
                 + "salePrice DECIMAL(10,2))";
         

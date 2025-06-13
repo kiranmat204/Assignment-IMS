@@ -69,7 +69,7 @@ public class SaleProductForm extends JPanel{
         displayPercentageLabel = new JLabel("null");
         displayPercentageLabel.setFont(boldFont);
         
-        JLabel salesPriceLabel = new JLabel("Current Price:");
+        JLabel salesPriceLabel = new JLabel("Current Retail Price:");
         salesPriceLabel.setFont(boldFont);
         
         
@@ -82,7 +82,7 @@ public class SaleProductForm extends JPanel{
         row2.add(displayPercentageLabel);
         row2.add(Box.createHorizontalStrut(1200));
         row2.add(salesPriceLabel);
-        row2.add(Box.createHorizontalStrut(115));
+        row2.add(Box.createHorizontalStrut(62));
         row2.add(displayPriceLabel);
         
         JPanel row3 = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
@@ -175,15 +175,31 @@ public class SaleProductForm extends JPanel{
             return;
         }
        
-        double orginalPrice = getActualPrice(checkID);
+        double orginalRetailPrice = getActualPrice(checkID,"retailPrice");
+        double originalPrice = getActualPrice(checkID,"price");
         
-        if(orginalPrice < 0){
+        if(orginalRetailPrice < 0){
             displayPercentageLabel.setForeground(Color.red);
             displayPercentageLabel.setText("Error, not Price Found!");
             return;
         }
         
-        double updatedPrice = orginalPrice * (1-checkSaleInput/100);
+        double updatedPrice = orginalRetailPrice * (1-checkSaleInput/100);
+        int result = JOptionPane.YES_OPTION;
+        
+        if(updatedPrice < originalPrice){
+            result = JOptionPane.showConfirmDialog(null, 
+                    "The sale price ($" + String.format("%.2f", updatedPrice)
+                    + ") is lower than actual price ($" + String.format("%.2f",originalPrice)
+                    + "). Do you still want to apply?",
+                    "Price Warning",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+        }
+        
+        if (result != JOptionPane.YES_OPTION){
+            return;
+        }
         
         String update = "UPDATE PRODUCT SET sale = ?, salePrice = ? WHERE productId = ?";
         try(Connection conn = DatabaseConnection.getConnection();
@@ -203,8 +219,16 @@ public class SaleProductForm extends JPanel{
         }
     }
 
-    private double getActualPrice(String checkId) {
-        String query = "SELECT price FROM PRODUCT WHERE productId = ?";
+    private double getActualPrice(String checkId, String whichPrice) {
+        String query = "";
+        
+        if(whichPrice.equals("retailPrice")){
+            query = "SELECT retailPrice FROM PRODUCT WHERE productId = ?";
+        }
+        else if (whichPrice.equals("price")){
+            query = "SELECT price FROM PRODUCT WHERE productId = ?";
+        }
+        
         try(Connection conn = DatabaseConnection.getConnection();
            PreparedStatement stmt = conn.prepareStatement(query)){
             
@@ -212,7 +236,7 @@ public class SaleProductForm extends JPanel{
             ResultSet rs = stmt.executeQuery();
             
             if(rs.next()){
-                return rs.getDouble("price");
+                return rs.getDouble(whichPrice);
             }
         }
         catch(Exception ex){

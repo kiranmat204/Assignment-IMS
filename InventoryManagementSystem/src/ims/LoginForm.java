@@ -70,7 +70,7 @@ public class LoginForm extends JDialog {
         JButton cancelButton = new JButton("Cancel");
 
         loginButton.addActionListener(e -> {
-            if (authenticate(usernameField.getText(), new String(passwordField.getPassword()))) {
+            if (UserAuthentication.authenticate(usernameField.getText(), new String(passwordField.getPassword()))) {
                 loginResult = LOGIN_SUCCESS;
                 dispose();
             } else {
@@ -100,9 +100,5 @@ public class LoginForm extends JDialog {
     public int showLoginDialog() {
         setVisible(true);
         return loginResult;
-    }
-
-    private boolean authenticate(String username, String password) {
-        return "admin".equals(username) && "password".equals(password);
     }
 }

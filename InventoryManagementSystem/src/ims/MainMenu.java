@@ -53,7 +53,6 @@ public class MainMenu {
         JButton deleteProductButton = new JButton("Delete Product");
         JButton viewProductsButton = new JButton("Products Report");
         JButton saleProductButton = new JButton("Set Product Sale");
-        JButton manageStockButton = new JButton("Manage Stock");
 
         // Set font
         dashboardButton.setFont(buttonFont);
@@ -62,7 +61,6 @@ public class MainMenu {
         deleteProductButton.setFont(buttonFont);
         viewProductsButton.setFont(buttonFont);
         saleProductButton.setFont(buttonFont);
-        manageStockButton.setFont(buttonFont);
 
         // Optional: Make button sizes consistent
         Dimension buttonSize = new Dimension(200, 40);
@@ -72,7 +70,6 @@ public class MainMenu {
         deleteProductButton.setMaximumSize(buttonSize);
         viewProductsButton.setMaximumSize(buttonSize);
         saleProductButton.setMaximumSize(buttonSize);
-        manageStockButton.setMaximumSize(buttonSize);
 
         // Add buttons with consistent spacing (add strut AFTER each, except last)
         buttonPanel.add(dashboardButton);
@@ -86,8 +83,6 @@ public class MainMenu {
         buttonPanel.add(viewProductsButton);
         buttonPanel.add(Box.createVerticalStrut(20));
         buttonPanel.add(saleProductButton);
-        buttonPanel.add(Box.createVerticalStrut(20));
-        buttonPanel.add(manageStockButton);
 
         // TOP RIGHT: Logout button
         JButton logoutButton = new JButton("Logout");
@@ -150,12 +145,6 @@ public class MainMenu {
         saleProductButton.addActionListener(e -> {
             contentPanel.removeAll();
             contentPanel.add(new SaleProductForm(), BorderLayout.CENTER);
-            contentPanel.revalidate();
-            contentPanel.repaint();
-        });
-        manageStockButton.addActionListener(e ->{
-            contentPanel.removeAll();
-            contentPanel.add(new ManageStockForm(), BorderLayout.CENTER);
             contentPanel.revalidate();
             contentPanel.repaint();
         });

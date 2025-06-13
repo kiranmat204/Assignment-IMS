@@ -23,6 +23,7 @@ public class UpdateProductForm extends JPanel {
     private JTextField supplierField;
     private JTextField newQuantityField;
     private JTextField newPriceField;
+    private JTextField newRetailPriceField;
     private ProductDAO productDAO;
     private JTextField productNameField;
 
@@ -54,11 +55,13 @@ public class UpdateProductForm extends JPanel {
         supplierField = createInfoField(fieldFont);
         newQuantityField = new JTextField(10);
         newPriceField = new JTextField(10);
+        newRetailPriceField = new JTextField(10);
         newQuantityField.setFont(fieldFont);
         newPriceField.setFont(fieldFont);
+        newRetailPriceField.setFont(fieldFont);
 
         // Details panel (3 rows of 2 columns)
-        JPanel productDetailsPanel = new JPanel(new GridLayout(7, 2, 15, 15));
+        JPanel productDetailsPanel = new JPanel(new GridLayout(8, 2, 15, 15));
         productDetailsPanel.add(createLabel("Product ID:", labelFont));
         productDetailsPanel.add(productIdComboBox);
         productDetailsPanel.add(createLabel("Brand:", labelFont));
@@ -78,11 +81,15 @@ public class UpdateProductForm extends JPanel {
         productDetailsPanel.add(supplierField);
 
         // Update panel for new values
-        JPanel updateFieldsPanel = new JPanel(new GridLayout(1, 5, 15, 10));
+        JPanel updateFieldsPanel = new JPanel(new GridLayout(2, 4, 15, 10));
         updateFieldsPanel.add(createLabel("New Quantity:", labelFont));
         updateFieldsPanel.add(newQuantityField);
         updateFieldsPanel.add(createLabel("New Price:", labelFont));
         updateFieldsPanel.add(newPriceField);
+        updateFieldsPanel.add(createLabel("New Retail Price:", labelFont));
+        updateFieldsPanel.add(newRetailPriceField);
+        updateFieldsPanel.add(new JLabel(""));
+        updateFieldsPanel.add(new JLabel(""));
 
         // Update Button
         JButton updateButton = new JButton("Update Product");
@@ -117,9 +124,16 @@ public class UpdateProductForm extends JPanel {
                 String productId = (String) productIdComboBox.getSelectedItem();
                 int newQuantity = Integer.parseInt(newQuantityField.getText().trim());
                 double newPrice = Double.parseDouble(newPriceField.getText().trim());
+                double newRetailPrice = Double.parseDouble(newRetailPriceField.getText().trim());
+                
+                if(newRetailPrice < newPrice){
+                    JOptionPane.showMessageDialog(this, "Product retail price can't be lower than actual price!", "Invalid", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 boolean result = productDAO.updateProductQuantity(productId, newQuantity) &&
-                        productDAO.updateProductPrice(productId, newPrice);
+                        productDAO.updateProductPrice(productId, newPrice) &&
+                        productDAO.updateRetailPrice(productId, newRetailPrice);
 
                 if (result) {
                     JOptionPane.showMessageDialog(this, "Product updated successfully!");
@@ -158,6 +172,7 @@ public class UpdateProductForm extends JPanel {
             supplierField.setText(product.getSupplier());
             newQuantityField.setText("");
             newPriceField.setText("");
+            newRetailPriceField.setText("");
         }
 
     }
@@ -170,5 +185,6 @@ public class UpdateProductForm extends JPanel {
         supplierField.setText("");
         newQuantityField.setText("");
         newPriceField.setText("");
+        newRetailPriceField.setText("");
     }
 }
