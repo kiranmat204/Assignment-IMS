@@ -17,7 +17,7 @@ import java.awt.event.FocusEvent;
 public class AddProductForm extends JPanel {
 
     public AddProductForm() {
-        setLayout(new GridLayout(8, 2, 10, 10));
+        setLayout(new GridLayout(9, 2, 10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         Font boldFont = new Font("Arial", Font.BOLD, 18);
@@ -51,6 +51,10 @@ public class AddProductForm extends JPanel {
         JLabel priceLabel = new JLabel("Price:");
         priceLabel.setFont(boldFont);
         JTextField priceField = new JTextField();
+        
+        JLabel retailPriceLabel = new JLabel("Retail Price:");
+        retailPriceLabel.setFont(boldFont);
+        JTextField retailPriceField = new JTextField();
 
         JButton addButton = new JButton("Add Product");
         addButton.setFont(boldFont);
@@ -75,6 +79,8 @@ public class AddProductForm extends JPanel {
         add(quantityField);
         add(priceLabel);
         add(priceField);
+        add(retailPriceLabel);
+        add(retailPriceField);
         add(new JLabel());
         add(addButton);
 
@@ -162,6 +168,8 @@ public class AddProductForm extends JPanel {
                 String brand = (String) productBrandComboBox.getSelectedItem();
                 int qty = Integer.parseInt(quantityField.getText().trim());
                 double price = Double.parseDouble(priceField.getText().trim());
+                double retailPrice = Double.parseDouble(retailPriceField.getText().trim());
+                        
 
                 if (name == null || name.equals("-- Select Product --") ||
                         category == null || category.equals("-- Select Category --") ||
@@ -197,8 +205,13 @@ public class AddProductForm extends JPanel {
                     }
                     return;
                 }
+                
+                if(retailPrice < price){
+                    JOptionPane.showMessageDialog(this, "Product retail price can't be lower than actual price!", "Invalid", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                Product newProduct = new Product(id, supplier, category, brand, name, qty, price);
+                Product newProduct = new Product(id, supplier, category, brand, name, qty, price, retailPrice, 0, retailPrice);
                 boolean success = dao.addProduct(newProduct);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Product added successfully!");
@@ -209,6 +222,8 @@ public class AddProductForm extends JPanel {
                     supplierComboBox.setSelectedItem("");
                     quantityField.setText("");
                     priceField.setText("");
+                    retailPriceField.setText("");
+                    
                     productNameComboBox.setEnabled(false);
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to add product.");

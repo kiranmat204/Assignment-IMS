@@ -14,12 +14,12 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
 
-    private static final String DB_URL = "jdbc:derby://localhost:1527/inventoryDB;create=true";
+    private static final String DB_URL = "jdbc:derby:inventoryDB;create=true";
 
     public static Connection getConnection() throws SQLException {
         try {
             // Load the Derby JDBC driver
-            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             System.out.println("Derby driver loaded successfully");
 
             Connection conn = DriverManager.getConnection(DB_URL);
