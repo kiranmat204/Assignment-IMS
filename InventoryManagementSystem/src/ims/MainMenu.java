@@ -18,17 +18,9 @@ public class MainMenu {
     private JPanel contentPanel;
 
     public void showMainMenu() {
-        System.out.println("Testing Derby connection...");
-        try {
-            Class.forName("org.apache.derby.jdbc.ClientDriver");
-            System.out.println("SUCCESS: Derby driver loaded!");
-        } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(frame,
-                    "Failed to load Derby driver!\n" + e.getMessage(),
-                    "Driver Error",
-                    JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+
+        DatabaseTableSetup tableSetup = new DatabaseTableSetup();
+        tableSetup.initialiseTables();
 
         frame = new JFrame("Inventory Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,12 +40,13 @@ public class MainMenu {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 0, 0)); // padding
 
         JButton dashboardButton = new JButton("Dashboard");
-        JButton addProductButton = new JButton("Add Product");
+        JButton addProductButton = new JButton("Add Product (Purchase)");
         JButton updateProductButton = new JButton("Update Product");
         JButton deleteProductButton = new JButton("Delete Product");
-        JButton viewProductsButton = new JButton("Products Report");
-        JButton saleProductButton = new JButton("Set Product Sale");
-        JButton manageStockButton = new JButton("Manage Low Stock");
+        JButton viewProductsButton = new JButton("Products Stock Report");
+        JButton saleProductButton = new JButton("Sale Invoice");
+        JButton manageStockButton = new JButton("Low Stock Report");
+        JButton salesReportButton = new JButton("Sales Report");
 
         // Set font
         dashboardButton.setFont(buttonFont);
@@ -63,9 +56,10 @@ public class MainMenu {
         viewProductsButton.setFont(buttonFont);
         saleProductButton.setFont(buttonFont);
         manageStockButton.setFont(buttonFont);
+        salesReportButton.setFont(buttonFont);
 
         // Optional: Make button sizes consistent
-        Dimension buttonSize = new Dimension(200, 40);
+        Dimension buttonSize = new Dimension(250, 40);
         dashboardButton.setMaximumSize(buttonSize);
         addProductButton.setMaximumSize(buttonSize);
         updateProductButton.setMaximumSize(buttonSize);
@@ -73,6 +67,7 @@ public class MainMenu {
         viewProductsButton.setMaximumSize(buttonSize);
         saleProductButton.setMaximumSize(buttonSize);
         manageStockButton.setMaximumSize(buttonSize);
+        salesReportButton.setMaximumSize(buttonSize);
 
         // Add buttons with consistent spacing (add strut AFTER each, except last)
         buttonPanel.add(dashboardButton);
@@ -88,6 +83,8 @@ public class MainMenu {
         buttonPanel.add(saleProductButton);
         buttonPanel.add(Box.createVerticalStrut(20));
         buttonPanel.add(manageStockButton);
+        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(salesReportButton);
 
         // TOP RIGHT: Logout button
         JButton logoutButton = new JButton("Logout");
@@ -112,7 +109,7 @@ public class MainMenu {
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setOpaque(false);
         backgroundPanel.add(contentPanel, BorderLayout.CENTER);
-        
+
         // Button actions
         addProductButton.addActionListener(e -> {
             contentPanel.removeAll();
@@ -146,16 +143,23 @@ public class MainMenu {
             contentPanel.revalidate();
             contentPanel.repaint();
         });
-        
+
         saleProductButton.addActionListener(e -> {
             contentPanel.removeAll();
             contentPanel.add(new SaleProductForm(), BorderLayout.CENTER);
             contentPanel.revalidate();
             contentPanel.repaint();
         });
-        manageStockButton.addActionListener(e ->{
+        manageStockButton.addActionListener(e -> {
             contentPanel.removeAll();
             contentPanel.add(new ManageStockForm(), BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+
+        salesReportButton.addActionListener(e -> {
+            contentPanel.removeAll();
+            contentPanel.add(new SalesReportPanel(), BorderLayout.CENTER);
             contentPanel.revalidate();
             contentPanel.repaint();
         });
@@ -169,13 +173,11 @@ public class MainMenu {
 
             if (loginResult == LoginForm.LOGIN_SUCCESS) {
                 authenticated = true;
-                
+
                 // Create tables before launching main menu
-            DatabaseTableSetup tableSetup = new DatabaseTableSetup();
-            tableSetup.initialiseTables(); 
-            
-            
-            
+                DatabaseTableSetup tableSetup = new DatabaseTableSetup();
+                tableSetup.initialiseTables();
+
                 new MainMenu().showMainMenu();
             } else if (loginResult == LoginForm.LOGIN_TRY_AGAIN) {
                 // Loop continues

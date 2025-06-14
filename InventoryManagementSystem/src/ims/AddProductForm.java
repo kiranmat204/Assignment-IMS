@@ -52,9 +52,9 @@ public class AddProductForm extends JPanel {
         priceLabel.setFont(boldFont);
         JTextField priceField = new JTextField();
         
-        JLabel retailPriceLabel = new JLabel("Retail Price:");
-        retailPriceLabel.setFont(boldFont);
-        JTextField retailPriceField = new JTextField();
+//        JLabel retailPriceLabel = new JLabel("Retail Price:");
+//        retailPriceLabel.setFont(boldFont);
+//        JTextField retailPriceField = new JTextField();
 
         JButton addButton = new JButton("Add Product");
         addButton.setFont(boldFont);
@@ -79,8 +79,8 @@ public class AddProductForm extends JPanel {
         add(quantityField);
         add(priceLabel);
         add(priceField);
-        add(retailPriceLabel);
-        add(retailPriceField);
+//        add(retailPriceLabel);
+//        add(retailPriceField);
         add(new JLabel());
         add(addButton);
 
@@ -168,7 +168,7 @@ public class AddProductForm extends JPanel {
                 String brand = (String) productBrandComboBox.getSelectedItem();
                 int qty = Integer.parseInt(quantityField.getText().trim());
                 double price = Double.parseDouble(priceField.getText().trim());
-                double retailPrice = Double.parseDouble(retailPriceField.getText().trim());
+                //double retailPrice = Double.parseDouble(retailPriceField.getText().trim());
                         
 
                 if (name == null || name.equals("-- Select Product --") ||
@@ -206,12 +206,13 @@ public class AddProductForm extends JPanel {
                     return;
                 }
                 
-                if(retailPrice < price){
-                    JOptionPane.showMessageDialog(this, "Product retail price can't be lower than actual price!", "Invalid", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+//                if(retailPrice < price){
+//                    JOptionPane.showMessageDialog(this, "Product retail price can't be lower than actual price!", "Invalid", JOptionPane.ERROR_MESSAGE);
+//                    return;
+//                }
 
-                Product newProduct = new Product(id, supplier, category, brand, name, qty, price, retailPrice, 0, retailPrice);
+                //Product newProduct = new Product(id, supplier, category, brand, name, qty, price, retailPrice, 0, retailPrice);
+                Product newProduct = new Product(id, supplier, category, brand, name, qty, price);
                 boolean success = dao.addProduct(newProduct);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Product added successfully!");
@@ -222,7 +223,7 @@ public class AddProductForm extends JPanel {
                     supplierComboBox.setSelectedItem("");
                     quantityField.setText("");
                     priceField.setText("");
-                    retailPriceField.setText("");
+                    //retailPriceField.setText("");
                     
                     productNameComboBox.setEnabled(false);
                 } else {

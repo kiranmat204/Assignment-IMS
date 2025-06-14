@@ -4,9 +4,12 @@
  */
 package ims;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import ims.Product;
+import ims.ProductDAO;
+import org.junit.jupiter.api.*;
+
+import java.sql.*;
+import java.util.List;
 
 /**
  *
@@ -20,10 +23,9 @@ public class DatabaseConnection {
         try {
             // Load the Derby JDBC driver
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-            System.out.println("Derby driver loaded successfully");
 
             Connection conn = DriverManager.getConnection(DB_URL);
-            System.out.println("Connected to database successfully");
+
             return conn;
         } catch (ClassNotFoundException e) {
             throw new SQLException("Derby JDBC Driver not found", e);

@@ -16,7 +16,7 @@ import java.util.List;
 public class ProductDAO {
 
     public boolean addProduct(Product product) {
-        String sql = "INSERT INTO Product (productId, productName, quantity, productBrand, price, category, supplier, retailPrice, sale, salePrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Product (productId, productName, quantity, productBrand, price, category, supplier,sale) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, product.getProductId());
@@ -26,13 +26,14 @@ public class ProductDAO {
             stmt.setDouble(5, product.getPrice());
             stmt.setString(6, product.getCategory());
             stmt.setString(7, product.getSupplier());
-            stmt.setDouble(8, product.getRetailPrice());
-            stmt.setDouble(9, 0);
-            stmt.setDouble(10, product.getRetailPrice());
+            //stmt.setDouble(8, product.getRetailPrice());
+            stmt.setDouble(8, 0);
+            //stmt.setDouble(10, product.getRetailPrice());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Failed to Add product!");
+            e.printStackTrace();
             return false;
         }
     }
@@ -52,10 +53,10 @@ public class ProductDAO {
                         rs.getString("productBrand"),
                         rs.getString("productName"),
                         rs.getInt("quantity"),
-                        rs.getDouble("price"),
-                        rs.getDouble("retailPrice"),
-                        rs.getDouble("sale"),
-                        rs.getDouble("salePrice")
+                        rs.getDouble("price")
+                        //rs.getDouble("retailPrice"),
+//                        rs.getDouble("sale"),
+//                        rs.getDouble("salePrice")
                 );
             }
         } catch (SQLException e) {
@@ -159,10 +160,10 @@ public class ProductDAO {
                         rs.getString("productBrand"), // productBrand
                         rs.getString("productName"), // productName
                         rs.getInt("quantity"), // quantity
-                        rs.getDouble("price"), // price
-                        rs.getDouble("retailPrice"),
-                        rs.getDouble("sale"),
-                        rs.getDouble("salePrice")
+                        rs.getDouble("price") // price
+                        //rs.getDouble("retailPrice"),
+                        //rs.getDouble("sale"),
+                        //rs.getDouble("salePrice")
                 );
                 productList.add(product);
             }

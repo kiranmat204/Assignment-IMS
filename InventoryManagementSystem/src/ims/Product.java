@@ -15,24 +15,21 @@ public class Product {
     private int quantity;
     private String productBrand;
     private double price;
-    private double retailPrice;
+    //private double retailPrice;
     private String category;
     private String supplier;
     private double sale;
     private double salePrice;
 
     public Product(String productId, String supplier, String category, String productBrand,
-            String productName, int quantity, double price, double retailPrice, double sale,
-            double salePrice) {
-
+            String productName, int quantity, double price) {
         this.productId = productId;
+        this.supplier = supplier;
+        this.category = category;
+        this.productBrand = productBrand;
         this.productName = productName;
         this.quantity = quantity;
-        this.productBrand = productBrand;
-        this.retailPrice = retailPrice;
         this.price = price;
-        this.category = category;
-        this.supplier = supplier;
         this.sale = sale;
         this.salePrice = salePrice;
     }
@@ -92,41 +89,39 @@ public class Product {
     public void setSupplier(String supplier) {
         this.supplier = supplier;
     }
-    
-    public double getSale(){
+
+    public double getSale() {
         return this.sale;
     }
-    
-    public void setSale(double sale){
+
+    public void setSale(double sale) {
         this.sale = sale;
     }
-    
-    public double getSalePrice(){
+
+    public double getSalePrice() {
         return this.salePrice;
     }
-    
-    public void setSalePrice(double salePrice){
+
+    public void setSalePrice(double salePrice) {
         this.salePrice = salePrice;
     }
-    
-    public double getRetailPrice(){
-        return this.retailPrice;
-    }
-    
-    public void setSellingPrice(double retailPrice){
-        this.retailPrice = retailPrice;
-    }
-    
+
+//    public double getRetailPrice(){
+//        return this.retailPrice;
+//    }
+//    public void setSellingPrice(double retailPrice){
+//        this.retailPrice = retailPrice;
+//    }
     @Override
     public String toString() {
         return "Product [ID=" + productId +
-                ", Name=" + productName + 
+                ", Name=" + productName +
                 ", Brand=" + productBrand +
                 ", Category=" + category +
                 ", Supplier=" + supplier +
                 ", Quantity=" + quantity +
                 ", Price=" + price +
-                ", Sale="+ sale+
-                ", Sale Price="+salePrice+"]";
+                ", Sale=" + sale +
+                ", Sale Price=" + salePrice + "]";
     }
 }
