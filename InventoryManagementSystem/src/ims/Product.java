@@ -30,8 +30,8 @@ public class Product {
         this.productName = productName;
         this.quantity = quantity;
         this.price = price;
-        this.sale = sale;
-        this.salePrice = salePrice;
+//        this.sale = sale;
+//        this.salePrice = salePrice;
     }
 
     public String getProductId() {
