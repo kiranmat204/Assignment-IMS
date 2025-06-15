@@ -183,7 +183,37 @@ public class DatabaseTableSetup {
                 "('I2', 'Galaxy S23')," +
                 "('I3', 'Mi Watch')," +
                 "('I4', 'RTX 4090')," +
-                "('I5', 'Sony Bravia')";
+                "('I5', 'Sony Bravia')," +
+                "('I6', 'RTX 4080')," +
+                "('I7', 'RTX 4070')," +
+                "('I8', 'Galaxy Watch 7'),"+
+                "('I9', 'Apple Watch 10')," +
+                "('I10', 'PlayStation 5')," +
+                "('I11', 'Xbox Series X')," +
+                "('I12', 'Apple Ipad Pro M4')," +
+                "('I13', 'Apple Ipad Air M3'),"+
+                "('I14', 'Samsung S11 Ultra')," +
+                "('I15', 'Samsung S10 Ultra')," +
+                "('I16', 'Xiaomi Pad 7S'),"+
+                "('I17', 'Xiaomi Pad 7'),"+
+                "('I18', 'Huawei MatePad Pro 12.2'),"+
+                "('I19', 'Xiaomi 15 Ultra')," +
+                "('I20', 'LG C4 OLED'),"+
+                "('I21', 'Panasonic Z95A OLED'),"+
+                "('I22', 'Samsung QN90D Neo QLED'),"+
+                "('I23', 'Samsung S95D OLED')," +
+                "('I24', 'Sony A95L QD‑OLED'),"+
+                "('I25', 'Apple MacBook Air M3'),"+
+                "('I26', 'Dell XPS 13 Plus'),"+
+                "('I27', 'HP Sceptre x360 14')," +
+                "('I28', 'Samsung Galaxy Book4 Pro'),"+
+                "('I29', 'Samsung Galaxy S25 Edge'),"+
+                "('I30', 'Xiaomi 15 Ultra'),"+
+                "('I31', 'Huawei Pura 80 Ultra')," +
+                "('I32', 'Huawei Pura 80 Pro+')," +
+                "('I33', 'Huawei Pura 80 Pro')," +
+                "('I34', 'Huawei Pura 80'),"+
+                "('I35', 'HP EliteBook Ultra G1i')";
         executeDB(query);
     }
 
