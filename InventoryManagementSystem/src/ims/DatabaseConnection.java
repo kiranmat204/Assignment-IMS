@@ -4,12 +4,10 @@
  */
 package ims;
 
-import ims.Product;
-import ims.ProductDAO;
-import org.junit.jupiter.api.*;
+
 
 import java.sql.*;
-import java.util.List;
+
 
 /**
  *
@@ -25,6 +23,8 @@ public class DatabaseConnection {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 
             Connection conn = DriverManager.getConnection(DB_URL);
+            
+            
 
             return conn;
         } catch (ClassNotFoundException e) {

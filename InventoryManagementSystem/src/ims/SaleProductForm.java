@@ -128,7 +128,7 @@ public class SaleProductForm extends JPanel {
         addToInvoiceBtn.addActionListener(e -> addProductToInvoice());
 
         // === Invoice Items Table ===
-        String[] columns = {"Product ID", "Quantity", "Sale Price", "Discount"};
+        String[] columns = {"Product ID", "Quantity", "Sale Price", "Discount", "Total Price"};
         invoiceTableModel = new DefaultTableModel(columns, 0);
         invoiceTable = new JTable(invoiceTableModel);
         invoiceTable.setFillsViewportHeight(true);
@@ -209,25 +209,40 @@ public class SaleProductForm extends JPanel {
         }
 
         try {
+            // Get the input values from the form
             int quantity = Integer.parseInt(unitsSoldField.getText());
             double salePrice = Double.parseDouble(unitSalePriceField.getText());
             double discount = discountField.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(discountField.getText());
 
+            // Validate discount range
             if (discount < 0 || discount > 100) {
                 JOptionPane.showMessageDialog(this, "Discount must be between 0 and 100", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            SaleItem item = new SaleItem((String) productIdBox.getSelectedItem(), quantity, salePrice, discount);
+            // Calculate the total price before discount (unit price * quantity)
+            double totalPriceBeforeDiscount = salePrice * quantity;
+
+            // Calculate the discount amount on the total price
+            double discountAmount = (discount / 100) * totalPriceBeforeDiscount;
+
+            // Calculate the final total price after applying the discount
+            double finalTotalPrice = totalPriceBeforeDiscount - discountAmount;
+
+            // Create a SaleItem with the discounted price
+            SaleItem item = new SaleItem((String) productIdBox.getSelectedItem(), quantity, salePrice, discount, finalTotalPrice);
+
+            // Add the item to the invoice
             invoiceItems.add(item);
             invoiceTableModel.addRow(item.toRow());
 
-            // Clear fields for next entry
+            // Clear the input fields for the next product
             unitsSoldField.setText("");
             unitSalePriceField.setText("");
             discountField.setText("");
 
         } catch (NumberFormatException e) {
+            // Handle invalid input
             JOptionPane.showMessageDialog(this, "Please enter valid numbers for Units Sold, Sale Price, and Discount.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

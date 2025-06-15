@@ -45,8 +45,9 @@ public class MainMenu {
         JButton deleteProductButton = new JButton("Delete Product");
         JButton viewProductsButton = new JButton("Products Stock Report");
         JButton saleProductButton = new JButton("Sale Invoice");
-        JButton manageStockButton = new JButton("Low Stock Report");
         JButton salesReportButton = new JButton("Sales Report");
+        JButton manageStockButton = new JButton("Low Stock Report");
+        
 
         // Set font
         dashboardButton.setFont(buttonFont);
@@ -186,5 +187,6 @@ public class MainMenu {
                 System.exit(0);
             }
         }
+
     }
 }

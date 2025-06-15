@@ -16,7 +16,7 @@ import java.util.List;
 public class ProductDAO {
 
     public boolean addProduct(Product product) {
-        String sql = "INSERT INTO Product (productId, productName, quantity, productBrand, price, category, supplier,sale) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Product (productId, productName, quantity, productBrand, price, category, supplier) VALUES (?, ?, ?, ?, ?, ?,?)";
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, product.getProductId());
@@ -27,10 +27,11 @@ public class ProductDAO {
             stmt.setString(6, product.getCategory());
             stmt.setString(7, product.getSupplier());
             //stmt.setDouble(8, product.getRetailPrice());
-            stmt.setDouble(8, 0);
+            //stmt.setDouble(8,0);
             //stmt.setDouble(10, product.getRetailPrice());
 
             return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.out.println("Failed to Add product!");
             e.printStackTrace();
@@ -54,9 +55,9 @@ public class ProductDAO {
                         rs.getString("productName"),
                         rs.getInt("quantity"),
                         rs.getDouble("price")
-                        //rs.getDouble("retailPrice"),
-//                        rs.getDouble("sale"),
-//                        rs.getDouble("salePrice")
+                //rs.getDouble("retailPrice"),
+                //                        rs.getDouble("sale"),
+                //                        rs.getDouble("salePrice")
                 );
             }
         } catch (SQLException e) {
@@ -83,53 +84,48 @@ public class ProductDAO {
     // Update product price
     public boolean updateProductPrice(String productId, double newPrice) {
         String sql = "UPDATE Product SET price = ? WHERE productId = ?";
-        try(Connection conn = DatabaseConnection.getConnection();){
+        try (Connection conn = DatabaseConnection.getConnection();) {
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setDouble(1, newPrice);
                 stmt.setString(2, productId);
                 return stmt.executeUpdate() > 0;
             }
-        }
-        catch(SQLException ex){
-           ex.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             return false;
         }
     }
-    
-    public boolean updateRetailPrice(String productId, double newRetailPrice){
+
+    public boolean updateRetailPrice(String productId, double newRetailPrice) {
         String discountQuery = "SELECT sale FROM PRODUCT WHERE productId = ?";
         String sql = "UPDATE Product SET retailPrice = ?, salePrice = ? WHERE productId = ?";
-        try(Connection conn = DatabaseConnection.getConnection();){
+        try (Connection conn = DatabaseConnection.getConnection();) {
             double salesPercentage = 0;
-            
-            try(PreparedStatement stmt = conn.prepareStatement(discountQuery)){
-                stmt.setString(1,productId);
-                try(ResultSet rs = stmt.executeQuery()){
-                    if(rs.next()){
-                         salesPercentage = rs.getDouble("sale");
-                    }
-                    else{
+
+            try (PreparedStatement stmt = conn.prepareStatement(discountQuery)) {
+                stmt.setString(1, productId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        salesPercentage = rs.getDouble("sale");
+                    } else {
                         return false;
                     }
                 }
-                
+
             }
-            
-            double updatedSalePrice = newRetailPrice * (1-salesPercentage);
-            try(PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            double updatedSalePrice = newRetailPrice * (1 - salesPercentage);
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setDouble(1, newRetailPrice);
                 stmt.setDouble(2, updatedSalePrice);
                 stmt.setString(3, productId);
                 return stmt.executeUpdate() > 0;
             }
-        }
-        catch(SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return false;
         }
     }
-    
-    
 
     // Remove product from database
     public boolean removeProduct(String productId) {
@@ -161,9 +157,9 @@ public class ProductDAO {
                         rs.getString("productName"), // productName
                         rs.getInt("quantity"), // quantity
                         rs.getDouble("price") // price
-                        //rs.getDouble("retailPrice"),
-                        //rs.getDouble("sale"),
-                        //rs.getDouble("salePrice")
+                //rs.getDouble("retailPrice"),
+                //rs.getDouble("sale"),
+                //rs.getDouble("salePrice")
                 );
                 productList.add(product);
             }

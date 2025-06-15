@@ -74,6 +74,9 @@ public class SalesReportPanel extends JPanel {
         for (SaleRecord sale : sales) {
             double totalPrice = (sale.getSalePrice() - sale.getDiscount()) * sale.getQuantity();
             grandTotal += totalPrice;
+            
+             //System.out.println("Product Name: " + sale.getProductName());
+
 
             Object[] row = {
                 sale.getInvoiceNumber(),

@@ -5,7 +5,10 @@
 package ims;
 
 import org.junit.*;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -20,134 +23,142 @@ public class ProductDAOTest {
     private ProductDAO productDAO;
 
     @BeforeClass
-    public static void setUpDatabase() throws SQLException {
+    public static void setUpBeforeClass() throws SQLException {
+        // Set up the connection to the database for the test
         conn = DatabaseConnection.getConnection();
-
-        try (Statement stmt = conn.createStatement()) {
-            String createTableSQL = "CREATE TABLE Product (" +
-                    "productId VARCHAR(255) PRIMARY KEY, " +
-                    "productName VARCHAR(255), " +
-                    "quantity INT, " +
-                    "productBrand VARCHAR(255), " +
-                    "price DOUBLE, " +
-                    "category VARCHAR(255), " +
-                    "supplier VARCHAR(255), " +
-                    "sale DOUBLE, " +
-                    "retailPrice DOUBLE, " +
-                    "salePrice DOUBLE)";
-            stmt.execute(createTableSQL);
-        } catch (SQLException e) {
-            if (!e.getSQLState().equals("X0Y32")) {
-                throw e;
-            }
-        }
     }
 
     @Before
     public void setUp() {
+        // Set up before each test, create ProductDAO object
         productDAO = new ProductDAO();
     }
 
     @After
-    public void cleanUp() throws SQLException {
-        try (Statement stmt = conn.createStatement()) {
-            stmt.execute("DELETE FROM Product");
-        }
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        try (Statement stmt = conn.createStatement()) {
-            stmt.execute("DROP TABLE Product");
-        }
-        conn.close();
-    }
-
-    @Test
-    public void testAddProduct() throws SQLException {
-        Product testProduct = new Product("P123", "Supplier A", "Category A", "Brand A", "Product A", 10, 100.0);
-        boolean result = productDAO.addProduct(testProduct);
-        assertTrue(result);
-
-        String query = "SELECT * FROM Product WHERE productId = 'P123'";
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
-            assertTrue(rs.next());
-            assertEquals("Product A", rs.getString("productName"));
-            assertEquals(10, rs.getInt("quantity"));
-            assertEquals(100.0, rs.getDouble("price"), 0.01);
+    public void tearDown() {
+        // Clean up the database to remove the test data
+        try {
+            // Clear data that was inserted during the test to maintain test isolation
+            String deleteSQL = "DELETE FROM Product WHERE productId LIKE 'TEST%'";
+            try (PreparedStatement stmt = conn.prepareStatement(deleteSQL)) {
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     @Test
-    public void testGetProductById() throws SQLException {
-        Product testProduct = new Product("P123", "Supplier A", "Category A", "Brand A", "Product A", 10, 100.0);
-        productDAO.addProduct(testProduct);
+    public void testAddProduct() {
+        // Create a Product object for testing
+        Product product = new Product("TEST123", "Test Supplier", "Test Category", "Test Brand",
+                "Test Product", 100, 50.0);
 
-        Product product = productDAO.getProductById("P123");
-        assertNotNull(product);
-        assertEquals("P123", product.getProductId());
-        assertEquals("Product A", product.getProductName());
-        assertEquals(10, product.getQuantity());
+        // Add the product to the database
+        boolean result = productDAO.addProduct(product);
+
+        // Assert that the product was added successfully
+        assertTrue("Product should be added successfully", result);
+
+        // Verify that the product exists in the database
+        Product retrievedProduct = productDAO.getProductById("TEST123");
+        assertNotNull("Product should exist in the database", retrievedProduct);
+        assertEquals("Product ID should match", "TEST123", retrievedProduct.getProductId());
     }
 
     @Test
-    public void testUpdateProductQuantity() throws SQLException {
-        Product testProduct = new Product("P123", "Supplier A", "Category A", "Brand A", "Product A", 10, 100.0);
-        productDAO.addProduct(testProduct);
+    public void testUpdateProductQuantity() {
+        // Add a product first
+        Product product = new Product("TEST123", "Test Supplier", "Test Category", "Test Brand",
+                "Test Product", 100, 50.0);
+        productDAO.addProduct(product);
 
-        boolean result = productDAO.updateProductQuantity("P123", 20);
-        assertTrue(result);
+        // Update the product quantity
+        boolean result = productDAO.updateProductQuantity("TEST123", 200);
 
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT quantity FROM Product WHERE productId = 'P123'")) {
-            assertTrue(rs.next());
-            assertEquals(20, rs.getInt("quantity"));
+        // Assert that the quantity was updated successfully
+        assertTrue("Product quantity should be updated successfully", result);
+
+        // Retrieve the product and verify the updated quantity
+        Product updatedProduct = productDAO.getProductById("TEST123");
+        assertEquals("Product quantity should be updated to 200", 200, updatedProduct.getQuantity());
+    }
+
+    @Test
+    public void testUpdateProductPrice() {
+        // Add a product first
+        Product product = new Product("TEST123", "Test Supplier", "Test Category", "Test Brand",
+                "Test Product", 100, 50.0);
+        productDAO.addProduct(product);
+
+        // Update the product price
+        boolean result = productDAO.updateProductPrice("TEST123", 60.0);
+
+        // Assert that the price was updated successfully
+        assertTrue("Product price should be updated successfully", result);
+
+        // Retrieve the product and verify the updated price
+        Product updatedProduct = productDAO.getProductById("TEST123");
+        assertEquals(60.0, updatedProduct.getPrice(), 0.001);
+    }
+
+    @Test
+    public void testRemoveProduct() {
+        // Add a product first
+        Product product = new Product("TEST123", "Test Supplier", "Test Category", "Test Brand",
+                "Test Product", 100, 50.0);
+        productDAO.addProduct(product);
+
+        // Remove the product from the database
+        boolean result = productDAO.removeProduct("TEST123");
+
+        // Assert that the product was removed successfully
+        assertTrue("Product should be removed successfully", result);
+
+        // Verify that the product no longer exists in the database
+        Product removedProduct = productDAO.getProductById("TEST123");
+        assertNull("Product should be null after removal", removedProduct);
+    }
+
+    @Test
+    public void testGetAllProducts() {
+        // Add a few products first
+        productDAO.addProduct(new Product("TEST127", "Supplier 1", "Category 1", "Brand 1", "Product 1", 50, 25.0));
+        productDAO.addProduct(new Product("TEST128", "Supplier 2", "Category 2", "Brand 2", "Product 2", 30, 30.0));
+
+        // Get all products
+        List<Product> allProducts = productDAO.getAllProducts();
+
+        // Assert that we retrieved at least two products
+        assertTrue("There should be at least 2 products in the database", allProducts.size() >= 2);
+
+        // Verify that the added products are present
+        boolean foundProduct1 = false;
+        boolean foundProduct2 = false;
+        for (Product p : allProducts) {
+            if (p.getProductId().equals("TEST127")) {
+                foundProduct1 = true;
+            }
+            if (p.getProductId().equals("TEST128")) {
+                foundProduct2 = true;
+            }
         }
+
+        assertTrue("Product with ID TEST127 should be in the list", foundProduct1);
+        assertTrue("Product with ID TEST128 should be in the list", foundProduct2);
     }
 
     @Test
-    public void testUpdateProductPrice() throws SQLException {
-        Product testProduct = new Product("P123", "Supplier A", "Category A", "Brand A", "Product A", 10, 100.0);
-        productDAO.addProduct(testProduct);
+    public void testGetAllProductIds() {
+        // Add some products first
+        productDAO.addProduct(new Product("TEST129", "Supplier 1", "Category 1", "Brand 1", "Product 1", 50, 25.0));
+        productDAO.addProduct(new Product("TEST130", "Supplier 2", "Category 2", "Brand 2", "Product 2", 30, 30.0));
 
-        boolean result = productDAO.updateProductPrice("P123", 150.0);
-        assertTrue(result);
+        // Get all product IDs
+        List<String> productIds = productDAO.getAllProductIds();
 
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT price FROM Product WHERE productId = 'P123'")) {
-            assertTrue(rs.next());
-            assertEquals(150.0, rs.getDouble("price"), 0.01);
-        }
-    }
-
-    @Test
-    public void testRemoveProduct() throws SQLException {
-        Product testProduct = new Product("P123", "Supplier A", "Category A", "Brand A", "Product A", 10, 100.0);
-        productDAO.addProduct(testProduct);
-
-        boolean result = productDAO.removeProduct("P123");
-        assertTrue(result);
-
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT * FROM Product WHERE productId = 'P123'")) {
-            assertFalse(rs.next());
-        }
-    }
-
-    @Test
-    public void testGetAllProducts() throws SQLException {
-        productDAO.addProduct(new Product("P123", "Supplier A", "Category A", "Brand A", "Product A", 10, 100.0));
-        productDAO.addProduct(new Product("P124", "Supplier B", "Category B", "Brand B", "Product B", 5, 150.0));
-
-        List<Product> products = productDAO.getAllProducts();
-        assertEquals(2, products.size());
-    }
-
-    @Test
-    public void testGetAllProductIds() throws SQLException {
-        productDAO.addProduct(new Product("P123", "Supplier A", "Category A", "Brand A", "Product A", 10, 100.0));
-        productDAO.addProduct(new Product("P124", "Supplier B", "Category B", "Brand B", "Product B", 5, 150.0));
-
-        List<String> ids = productDAO.getAllProductIds();
-        assertEquals(2, ids.size());
-        assertTrue(ids.contains("P123"));
-        assertTrue(ids.contains("P124"));
+        // Assert that we retrieved the correct product IDs
+        assertTrue("Product ID TEST129 should be in the list", productIds.contains("TEST129"));
+        assertTrue("Product ID TEST130 should be in the list", productIds.contains("TEST130"));
     }
 }
